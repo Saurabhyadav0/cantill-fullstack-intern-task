@@ -1,0 +1,272 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Corvo Procurement — PR→PO</title>
+<script src="https://cdn.tailwindcss.com/3.4.16"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.3.1/umd/react.production.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.3.1/umd/react-dom.production.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/htm/3.1.1/htm.min.js"></script>
+<style>
+  body{background:#0b1020;color:#e7ecf5}
+  .card{background:#131a2e;border:1px solid #243049;border-radius:14px}
+  .btn{border-radius:10px;padding:.5rem .9rem;font-weight:600;transition:.15s}
+  .btn-p{background:#3b82f6;color:#fff} .btn-p:hover{background:#2f6fe0}
+  .btn-g{background:#1e293b;color:#cbd5e1;border:1px solid #334155} .btn-g:hover{background:#273449}
+  .pill{font-size:11px;padding:2px 8px;border-radius:999px;font-weight:700}
+  .in{background:#0e1526;border:1px solid #2a3650;border-radius:10px;padding:.5rem .7rem;color:#e7ecf5;width:100%}
+  table{border-collapse:collapse;width:100%} th,td{text-align:left;padding:.5rem .6rem;border-bottom:1px solid #1e2740;font-size:13px;vertical-align:top}
+  th{color:#8ea0c0;font-weight:600;position:sticky;top:0;background:#131a2e}
+  ::-webkit-scrollbar{height:9px;width:9px}::-webkit-scrollbar-thumb{background:#2a3650;border-radius:9px}
+</style>
+</head>
+<body>
+<div id="root" class="max-w-7xl mx-auto px-4 py-5"></div>
+<script>
+const html = htm.bind(React.createElement);
+const {useState,useEffect,useRef} = React;
+const api = (p,o)=>fetch('/api'+p,o).then(async r=>{const t=await r.text();let j;try{j=JSON.parse(t)}catch{j=t} if(!r.ok) throw (j&&j.detail)||j||r.statusText; return j;});
+const jpost=(p,b)=>api(p,{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify(b)});
+const inr=n=>n==null||n===''?'—':'₹'+Number(n).toLocaleString('en-IN');
+const ROUTE_COLOR={CONTRACT_PO:'#22c55e',EMERGENCY_PO:'#f97316',SPOT_PO:'#38bdf8',RFQ:'#eab308',RFP:'#a78bfa',CAPEX_SOURCING:'#f472b6',NEW_ITEM_SOURCING:'#94a3b8',NOT_PROCESSED:'#64748b'};
+
+function Pill({children,color}){return html`<span class="pill" style=${{background:(color||'#334155')+'22',color:color||'#cbd5e1',border:'1px solid '+(color||'#334155')+'55'}}>${children}</span>`}
+
+function App(){
+  const [tab,setTab]=useState('chat');
+  const [role,setRole]=useState('Requester');
+  const [meta,setMeta]=useState(null);
+  const [toast,setToast]=useState(null);
+  useEffect(()=>{api('/meta').then(setMeta).catch(e=>setToast(''+e))},[]);
+  const flash=m=>{setToast(m);setTimeout(()=>setToast(null),3000)};
+  const tabs=[['chat','Chat intake'],['buyer','Buyer workspace'],['policy','Policy (data)'],['contracts','Contracts'],['audit','Audit']];
+  return html`
+  <div>
+    <header class="flex items-center justify-between mb-5 flex-wrap gap-3">
+      <div>
+        <div class="text-xl font-bold">Corvo Engineering · PR→PO</div>
+        <div class="text-xs text-slate-400">Policy-driven procurement · ${meta?('v'+meta.active_policy.version+' · eff '+meta.active_policy.effective_date):'…'}
+          ${meta?' · '+meta.counts.items+' items · '+meta.counts.suppliers+' suppliers · '+meta.counts.contracts+' contracts':''}</div>
+      </div>
+      <div class="flex items-center gap-2">
+        <span class="text-xs text-slate-400">Role</span>
+        <select class="in" style=${{width:'auto'}} value=${role} onChange=${e=>setRole(e.target.value)}>
+          ${['Requester','Buyer','Procurement'].map(r=>html`<option key=${r}>${r}</option>`)}
+        </select>
+      </div>
+    </header>
+    <nav class="flex gap-2 mb-5 flex-wrap">
+      ${tabs.map(([k,l])=>html`<button key=${k} class=${'btn '+(tab===k?'btn-p':'btn-g')} onClick=${()=>setTab(k)}>${l}</button>`)}
+    </nav>
+    ${tab==='chat'&&html`<${Chat} role=${role} flash=${flash}/>`}
+    ${tab==='buyer'&&html`<${Buyer} role=${role} flash=${flash}/>`}
+    ${tab==='policy'&&html`<${PolicyTab} role=${role} flash=${flash}/>`}
+    ${tab==='contracts'&&html`<${Contracts} role=${role} flash=${flash}/>`}
+    ${tab==='audit'&&html`<${Audit}/>`}
+    ${toast&&html`<div class="fixed bottom-5 right-5 card px-4 py-3 text-sm shadow-xl">${toast}</div>`}
+  </div>`;
+}
+
+/* ---------------- Chat intake ---------------- */
+function Chat({role,flash}){
+  const [msgs,setMsgs]=useState([{who:'bot',text:'Hi! Describe what you need, e.g. "need 200 nitrile gloves for Chakan by next Friday".'}]);
+  const [text,setText]=useState('');
+  const [draft,setDraft]=useState(null);
+  const end=useRef();
+  useEffect(()=>{end.current&&end.current.scrollIntoView()},[msgs]);
+  const push=(who,text,extra)=>setMsgs(m=>[...m,{who,text,...extra}]);
+
+  async function send(){
+    if(!text.trim())return; const t=text; setText(''); push('me',t);
+    try{
+      const r=await jpost('/chat/parse',{text:t}); const i=r.interpretation;
+      let d={...(draft||{}),...Object.fromEntries(Object.entries({item_code:i.resolved_item_code,description:i.resolved_description||r.interpretation.item_phrase,quantity:i.quantity,plant:i.plant,need_by_date:i.need_by_date,urgency:i.urgency}).filter(([,v])=>v!=null&&v!==''))};
+      setDraft(d);
+      if(r.is_new_candidate&&!r.confident_item){ push('bot',`I couldn't match "${i.item_phrase}" to the item master — I'll treat it as a NEW item (goes to sourcing). Confirm or correct the item.`,{cands:r.candidates}); }
+      else if(r.ambiguous){ push('bot',`Did you mean one of these? Pick the right item:`,{cands:r.candidates}); }
+      else if(r.confident_item){ push('bot',`Matched → ${i.resolved_item_code} (${i.resolved_description}).`,{cands:r.candidates}); }
+      const miss=(r.missing||[]).filter(m=>m!=='item'||!r.confident_item);
+      const ask=miss.filter(m=>!d[m]||(m==='item'&&!d.item_code));
+      if(ask.length) push('bot','I still need: '+ask.map(a=>({quantity:'quantity',plant:'plant (PUN1/CHK1)',need_by_date:'need-by date',item:'the item'})[a]||a).join(', ')+'. You can type it, e.g. "qty 150, Pune, by 2026-12-01".');
+      else push('bot','Looks complete — review on the right and create the PR.');
+    }catch(e){push('bot','Error: '+e)}
+  }
+  function pick(c){ setDraft(d=>({...d,item_code:c.item_code,description:c.description})); push('bot',`Using ${c.item_code} (${c.description}).`); }
+  async function create(){
+    try{ const r=await jpost('/prs',{...draft,actor:role.toLowerCase()}); flash('PR created: '+r.pr.pr_no); push('bot',`✓ Created ${r.pr.pr_no}. Add it to a batch in the Buyer workspace (source = stored PRs).`); setDraft(null);}catch(e){flash('Error: '+e)}
+  }
+  const ready=draft&&draft.quantity&&draft.plant&&draft.need_by_date&&(draft.item_code||draft.description);
+  return html`<div class="grid md:grid-cols-3 gap-4">
+    <div class="card p-4 md:col-span-2 flex flex-col" style=${{height:'70vh'}}>
+      <div class="flex-1 overflow-auto pr-1">
+        ${msgs.map((m,i)=>html`<div key=${i} class=${'mb-3 flex '+(m.who==='me'?'justify-end':'justify-start')}>
+          <div class=${'px-3 py-2 rounded-xl max-w-[80%] '+(m.who==='me'?'bg-blue-600 text-white':'bg-slate-800')}>
+            <div class="text-sm whitespace-pre-wrap">${m.text}</div>
+            ${m.cands&&html`<div class="mt-2 flex flex-col gap-1">${m.cands.map(c=>html`<button key=${c.item_code} class="btn btn-g text-left text-xs" onClick=${()=>pick(c)}>${c.item_code} · ${c.description} <span class="text-slate-500">(${c.score})</span></button>`)}</div>`}
+          </div></div>`)}
+        <div ref=${end}></div>
+      </div>
+      <div class="flex gap-2 mt-3">
+        <input class="in" placeholder="Type a request…" value=${text} onChange=${e=>setText(e.target.value)} onKeyDown=${e=>e.key==='Enter'&&send()}/>
+        <button class="btn btn-p" onClick=${send}>Send</button>
+      </div>
+    </div>
+    <div class="card p-4">
+      <div class="font-semibold mb-2">PR draft</div>
+      ${!draft&&html`<div class="text-sm text-slate-400">Nothing yet. Chat to build a PR.</div>`}
+      ${draft&&html`<div class="text-sm space-y-2">
+        ${[['Item',draft.item_code?`${draft.item_code}`:`NEW · ${draft.description||'?'}`],['Description',draft.description],['Quantity',draft.quantity],['Plant',draft.plant],['Need-by',draft.need_by_date],['Urgency',draft.urgency||'Normal']].map(([k,v])=>html`<div key=${k} class="flex justify-between gap-3"><span class="text-slate-400">${k}</span><span class="text-right">${v||'—'}</span></div>`)}
+        <input class="in mt-2" placeholder="est. unit price (for NEW items)" onChange=${e=>setDraft(d=>({...d,estimated_unit_price:e.target.value}))}/>
+        <button class=${'btn w-full mt-2 '+(ready?'btn-p':'btn-g')} disabled=${!ready} onClick=${create}>Create PR</button>
+        <div class="text-[11px] text-slate-500">The assistant never invents an item code — unmatched text becomes a NEW item for sourcing.</div>
+      </div>`}
+    </div>
+  </div>`;
+}
+
+/* ---------------- Buyer workspace ---------------- */
+function Buyer({role,flash}){
+  const [reqs,setReqs]=useState([]); const [busy,setBusy]=useState(false); const [filter,setFilter]=useState(''); const [sel,setSel]=useState(null);
+  const load=()=>api('/requirements').then(setReqs);
+  useEffect(()=>{load()},[]);
+  async function run(source,file){
+    setBusy(true);
+    try{ const fd=new FormData(); if(file)fd.append('file',file); else fd.append('source',source); fd.append('label',source==='sample'?'sample':'run');
+      const r=await fetch('/api/process-batch',{method:'POST',body:fd}); const j=await r.json(); if(!r.ok)throw (j.detail||j);
+      flash(`Processed ${j.count} lines under v${j.policy_version}`); load();
+    }catch(e){flash('Error: '+e)} setBusy(false);
+  }
+  async function approve(g){ try{await jpost(`/requirements/${g}/approve`,{actor:role.toLowerCase()}); flash('Approved '+g); load();}catch(e){flash('Error: '+e)} }
+  const shown=reqs.filter(r=>!filter||r.route===filter);
+  const routes=[...new Set(reqs.map(r=>r.route))];
+  const stat=routes.map(rt=>[rt,reqs.filter(r=>r.route===rt).length]);
+  return html`<div class="space-y-4">
+    <div class="card p-4 flex flex-wrap items-center gap-2">
+      <button class="btn btn-p" disabled=${busy} onClick=${()=>run('sample')}>${busy?'…':'Process sample batch'}</button>
+      <button class="btn btn-g" disabled=${busy} onClick=${()=>run('stored')}>Process stored PRs</button>
+      <label class="btn btn-g cursor-pointer">Upload CSV<input type="file" accept=".csv" class="hidden" onChange=${e=>e.target.files[0]&&run('upload',e.target.files[0])}/></label>
+      <div class="flex-1"></div>
+      <button class="btn btn-g" onClick=${()=>window.open('/api/export/decisions.csv')}>⬇ decisions.csv</button>
+      <button class="btn btn-g" onClick=${()=>{const d=prompt('Preferred list as of (YYYY-MM-DD)','2026-11-01');if(d)window.open('/api/export/preferred.csv?as_of='+d)}}>⬇ preferred.csv</button>
+    </div>
+    ${reqs.length>0&&html`<div class="flex flex-wrap gap-2">
+      <button class=${'btn '+(filter===''?'btn-p':'btn-g')} onClick=${()=>setFilter('')}>All ${reqs.length}</button>
+      ${stat.map(([rt,n])=>html`<button key=${rt} class=${'btn '+(filter===rt?'btn-p':'btn-g')} onClick=${()=>setFilter(rt)}><span style=${{color:ROUTE_COLOR[rt]}}>●</span> ${rt} ${n}</button>`)}
+    </div>`}
+    <div class="card p-0 overflow-auto" style=${{maxHeight:'62vh'}}>
+      ${reqs.length===0?html`<div class="p-6 text-slate-400 text-sm">No run yet. Process a batch to see requirements, decisions and the “why”.</div>`:html`
+      <table><thead><tr>${['Group','PO','Item','Plant','Qty','Value','Route','Supplier / suggestions','Status','Why'].map(h=>html`<th key=${h}>${h}</th>`)}</tr></thead>
+      <tbody>${shown.map(r=>html`<tr key=${r.group_id} class="hover:bg-slate-800/40">
+        <td class="font-mono text-xs">${r.group_id}${r.lines.length>1?html`<div class="text-[10px] text-slate-500">${r.lines.length} lines${r.is_emergency?' · 🚨':''}</div>`:(r.is_emergency?' 🚨':'')}</td>
+        <td class="font-mono text-xs">${r.po_id||'—'}</td>
+        <td>${r.resolved_item_code}<div class="text-[11px] text-slate-500 max-w-[180px] truncate">${r.item_description}</div></td>
+        <td>${r.plant}</td><td>${r.total_quantity}</td>
+        <td>${inr(r.value)}<div class="text-[10px] text-slate-500">${r.value_basis}</div></td>
+        <td><${Pill} color=${ROUTE_COLOR[r.route]}>${r.route}</${Pill}></td>
+        <td>${r.supplier_id?html`<span>${r.supplier_id} ${r.po_unit_price!=null?'· '+inr(Math.round(r.po_unit_price)):''}</span>`:html`<span class="text-slate-400 text-xs">${(r.suggested_supplier_ids||[]).join(' · ')||'—'}</span>`}</td>
+        <td>${r.status==='pending'?html`<div class="flex gap-1"><button class="btn btn-p text-xs" onClick=${()=>approve(r.group_id)}>Approve</button><button class="btn btn-g text-xs" onClick=${()=>setSel(r)}>Override</button></div>`:html`<${Pill} color=${r.status==='approved'?'#22c55e':'#f59e0b'}>${r.status}</${Pill}>`}</td>
+        <td><button class="btn btn-g text-xs" onClick=${()=>setSel(r)}>view</button></td>
+      </tr>`)}</tbody></table>`}
+    </div>
+    ${sel&&html`<${ReqModal} r=${sel} role=${role} onClose=${()=>setSel(null)} onChanged=${()=>{setSel(null);load()}} flash=${flash}/>`}
+  </div>`;
+}
+
+function ReqModal({r,role,onClose,onChanged,flash}){
+  const [reason,setReason]=useState(''); const [field,setField]=useState('route'); const [value,setValue]=useState('');
+  async function save(){ if(!reason.trim())return flash('Override needs a reason'); try{await jpost(`/requirements/${r.group_id}/override`,{actor:role.toLowerCase(),field,value,reason}); flash('Override recorded'); onChanged();}catch(e){flash('Error: '+e)} }
+  return html`<div class="fixed inset-0 bg-black/60 flex items-center justify-center p-4 z-50" onClick=${onClose}>
+    <div class="card p-5 max-w-2xl w-full" onClick=${e=>e.stopPropagation()}>
+      <div class="flex justify-between items-start mb-3"><div><div class="font-bold">${r.group_id} · ${r.resolved_item_code}</div><div class="text-xs text-slate-400">${r.item_description}</div></div><button class="btn btn-g" onClick=${onClose}>✕</button></div>
+      <div class="grid grid-cols-2 gap-2 text-sm mb-3">
+        ${[['Decision',r.decision],['Route',r.route],['Value',inr(r.value)],['Supplier',r.supplier_id||'—'],['PO',r.po_id||'—'],['Policy',r.policy_version+' · '+r.clause]].map(([k,v])=>html`<div key=${k}><span class="text-slate-400">${k}:</span> ${v}</div>`)}
+      </div>
+      <div class="bg-slate-800/50 rounded-lg p-3 text-sm mb-3"><span class="text-slate-400">Why: </span>${r.reason}</div>
+      <div class="mb-3"><div class="text-xs text-slate-400 mb-1">PR lines (${r.lines.length})</div>
+        <div class="max-h-40 overflow-auto text-xs space-y-1">${r.lines.map((l,i)=>html`<div key=${i} class="flex justify-between gap-2 border-b border-slate-800 pb-1"><span>${l.pr_no}/${l.pr_line} · ${l.description}</span><span class="text-slate-400">${l.quantity} · by ${l.need_by_date} · ${l.urgency}</span></div>${l.match_note?html`<div class="text-[10px] text-slate-500">${l.match_note}</div>`:''}`)}</div>
+      </div>
+      <div class="border-t border-slate-700 pt-3">
+        <div class="text-sm font-semibold mb-1">Override (kept with the original decision)</div>
+        <div class="flex gap-2 mb-2">
+          <select class="in" style=${{width:'auto'}} value=${field} onChange=${e=>setField(e.target.value)}>${['route','supplier_id','decision'].map(f=>html`<option key=${f}>${f}</option>`)}</select>
+          <input class="in" placeholder="new value" value=${value} onChange=${e=>setValue(e.target.value)}/>
+        </div>
+        <input class="in mb-2" placeholder="reason (required)" value=${reason} onChange=${e=>setReason(e.target.value)}/>
+        <button class="btn btn-p" onClick=${save}>Save override</button>
+      </div>
+    </div></div>`;
+}
+
+/* ---------------- Policy tab ---------------- */
+function PolicyTab({role,flash}){
+  const [pols,setPols]=useState([]); const [text,setText]=useState(''); const [preview,setPreview]=useState(null); const [eff,setEff]=useState('2026-04-01');
+  const load=()=>api('/policies').then(setPols); useEffect(()=>{load()},[]);
+  async function propose(){ try{const r=await jpost('/policies/amendment',{text,effective_date:eff,actor:role.toLowerCase()}); setPreview(r); flash('Draft '+r.new_version+' created'); load();}catch(e){flash('Error: '+e)} }
+  async function approve(id){ try{const r=await jpost(`/policies/${id}/approve`,{actor:role.toLowerCase()}); flash('Activated v'+r.active_version); setPreview(null); load();}catch(e){flash('Error: '+e)} }
+  const examples=['Raise the Spot PO limit to 3,00,000','For plant CHK1, emergencies up to 1,00,000 should skip quotes','Change the clubbing create window to 10 days'];
+  return html`<div class="grid md:grid-cols-2 gap-4">
+    <div class="card p-4">
+      <div class="font-semibold mb-1">Upload / describe an amendment</div>
+      <div class="text-xs text-slate-400 mb-2">Procurement describes the change in plain English (or pastes amendment text). The app parses it, shows what changes, and activates a new version on approval — <b>no code change</b>.</div>
+      <textarea class="in" rows="4" placeholder="Describe the policy change…" value=${text} onChange=${e=>setText(e.target.value)}></textarea>
+      <div class="flex flex-wrap gap-1 my-2">${examples.map(x=>html`<button key=${x} class="btn btn-g text-[11px]" onClick=${()=>setText(x)}>${x}</button>`)}</div>
+      <div class="flex gap-2 items-center mb-2"><span class="text-xs text-slate-400">Effective</span><input class="in" style=${{width:'auto'}} value=${eff} onChange=${e=>setEff(e.target.value)}/>
+        <button class="btn btn-p" onClick=${propose} disabled=${role!=='Procurement'}>Preview changes</button></div>
+      ${role!=='Procurement'&&html`<div class="text-[11px] text-amber-400">Switch role to Procurement to amend policy.</div>`}
+      ${preview&&html`<div class="bg-slate-800/50 rounded-lg p-3 mt-2">
+        <div class="text-sm font-semibold mb-1">Draft v${preview.new_version} · eff ${preview.effective_date} ${preview.used_llm?'· (AI-parsed)':''}</div>
+        <ul class="text-sm list-disc ml-5 space-y-1">${preview.changes.map((c,i)=>html`<li key=${i} dangerouslySetInnerHTML=${{__html:c.replace(/\*\*(.+?)\*\*/g,'<b>$1</b>').replace(/\`(.+?)\`/g,'<code class=\'text-sky-300\'>$1</code>')}}></li>`)}</ul>
+        <button class="btn btn-p mt-3" onClick=${()=>approve(preview.draft_id)}>Approve & activate</button>
+      </div>`}
+    </div>
+    <div class="card p-4">
+      <div class="font-semibold mb-2">Version history</div>
+      <table><thead><tr>${['Ver','Effective','Status','Summary'].map(h=>html`<th key=${h}>${h}</th>`)}</tr></thead>
+      <tbody>${pols.map(p=>html`<tr key=${p.id}><td class="font-mono">${p.version}</td><td>${p.effective_date}</td>
+        <td><${Pill} color=${p.status==='active'?'#22c55e':p.status==='draft'?'#eab308':'#64748b'}>${p.status}</${Pill}></td>
+        <td class="text-xs text-slate-400">${p.summary||''} ${p.status==='draft'?html`<button class="btn btn-p text-[11px] ml-1" onClick=${()=>approve(p.id)}>activate</button>`:''}</td></tr>`)}</tbody></table>
+    </div>
+  </div>`;
+}
+
+/* ---------------- Contracts ---------------- */
+function Contracts({role,flash}){
+  const [cs,setCs]=useState([]); const [form,setForm]=useState(null);
+  const load=()=>api('/contracts').then(setCs); useEffect(()=>{load()},[]);
+  async function add(){ try{ const body={...form,value_cap:Number(form.value_cap),lines:form.lines.split('\n').map(x=>x.trim()).filter(Boolean).map(l=>{const[item_code,rate]=l.split(/[ ,]+/);return{item_code,rate:Number(rate)}}),actor:role.toLowerCase()};
+      await jpost('/contracts',body); flash('Contract added: '+body.contract_id); setForm(null); load();}catch(e){flash('Error: '+e)} }
+  return html`<div class="space-y-4">
+    <div class="flex items-center gap-2"><div class="font-semibold">Contracts (${cs.length})</div><div class="flex-1"></div>
+      <button class="btn btn-p" onClick=${()=>setForm({contract_id:'',supplier_id:'',supplier_name:'',start_date:'2026-11-15',end_date:'2027-11-14',value_cap:'',lines:''})}>+ Add PDF-only contract</button></div>
+    <div class="card p-0 overflow-auto" style=${{maxHeight:'65vh'}}>
+      <table><thead><tr>${['Contract','Supplier','Validity','Ceiling','Consumed','Source','Items'].map(h=>html`<th key=${h}>${h}</th>`)}</tr></thead>
+      <tbody>${cs.map(c=>html`<tr key=${c.contract_id}><td class="font-mono">${c.contract_id}</td><td>${c.supplier_id} ${c.supplier_name}</td>
+        <td class="text-xs">${c.start_date} → ${c.end_date}</td><td>${inr(c.value_cap)}</td><td>${inr(c.consumed_value)}</td>
+        <td><${Pill} color=${c.source==='pdf'?'#a78bfa':'#64748b'}>${c.source}</${Pill}></td>
+        <td class="text-xs text-slate-400">${c.items.map(i=>i.item_code+'@'+i.rate).join(', ')}</td></tr>`)}</tbody></table>
+    </div>
+    ${form&&html`<div class="fixed inset-0 bg-black/60 flex items-center justify-center p-4 z-50" onClick=${()=>setForm(null)}>
+      <div class="card p-5 max-w-lg w-full" onClick=${e=>e.stopPropagation()}>
+        <div class="font-bold mb-3">Add PDF-only contract (binding from start date, consumed = 0)</div>
+        ${[['contract_id','RC-2026-0xx'],['supplier_id','S0xx'],['supplier_name','Name'],['start_date','YYYY-MM-DD'],['end_date','YYYY-MM-DD'],['value_cap','e.g. 2000000']].map(([k,ph])=>html`<input key=${k} class="in mb-2" placeholder=${k+' · '+ph} value=${form[k]} onChange=${e=>setForm(f=>({...f,[k]:e.target.value}))}/>`)}
+        <textarea class="in mb-2" rows="3" placeholder=${'lines, one per row: ITM-1037 2439.01'} value=${form.lines} onChange=${e=>setForm(f=>({...f,lines:e.target.value}))}></textarea>
+        <button class="btn btn-p" onClick=${add}>Add contract</button>
+      </div></div>`}
+  </div>`;
+}
+
+/* ---------------- Audit ---------------- */
+function Audit(){
+  const [rows,setRows]=useState([]); useEffect(()=>{api('/audit').then(setRows)},[]);
+  return html`<div class="card p-0 overflow-auto" style=${{maxHeight:'70vh'}}>
+    <table><thead><tr>${['When (UTC)','Actor','Action','Entity','Detail'].map(h=>html`<th key=${h}>${h}</th>`)}</tr></thead>
+    <tbody>${rows.map(r=>html`<tr key=${r.id}><td class="text-xs">${r.ts.replace('T',' ').slice(0,19)}</td><td>${r.actor}</td>
+      <td><${Pill}>${r.action}</${Pill}></td><td>${r.entity}</td><td class="text-xs text-slate-400 max-w-md truncate">${r.detail}</td></tr>`)}</tbody></table>
+  </div>`;
+}
+
+ReactDOM.createRoot(document.getElementById('root')).render(html`<${App}/>`);
+</script>
+</body>
+</html>
