@@ -1,0 +1,40 @@
+# ---------------------------------------------------------------------------
+# TASK RULE: the public repo must NOT contain the task data files.
+# Everything the kit shipped (master data, contracts, PR batches, policy PDFs,
+# and the policy encoded as data) stays local and is ignored here.
+# See data/README.md for how to place the kit locally.
+# ---------------------------------------------------------------------------
+data/*
+!data/README.md
+docs/policy-v5*.json
+*.pdf
+*.csv
+
+# Secrets / env
+.env
+.env.*
+!.env.example
+
+# Node
+node_modules/
+dist/
+build/
+.vite/
+*.log
+
+# Python
+__pycache__/
+*.pyc
+.venv/
+venv/
+.pytest_cache/
+.mypy_cache/
+*.egg-info/
+
+# OS / editor
+.DS_Store
+.idea/
+.vscode/
+
+# runtime db
+api/app.db

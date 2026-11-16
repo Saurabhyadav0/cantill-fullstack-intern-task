@@ -1,0 +1,6 @@
+fastapi==0.163.1
+uvicorn[standard]==0.34.0
+python-multipart==0.0.20
+pydantic==2.14.3
+# optional: enables LLM-assisted chat intake + amendment parsing when ANTHROPIC_API_KEY is set
+# anthropic==0.40.0
