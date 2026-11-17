@@ -1,0 +1,13 @@
+services:
+  app:
+    build: .
+    ports:
+      - "8000:8000"
+    environment:
+      - DATA_DIR=/app/data
+      - DB_PATH=/app/api/app.db
+      # - ANTHROPIC_API_KEY=${ANTHROPIC_API_KEY}   # optional: LLM chat + amendment parsing
+    volumes:
+      # local dev: mount the gitignored kit data + policy so the container can read them
+      - ./data:/app/data
+      - ./docs:/app/docs
