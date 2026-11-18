@@ -28,7 +28,9 @@
       var(--bg);
     background-attachment:fixed;
   }
-  ::selection{background:rgba(79,140,255,.35)}
+  ::selection{background:rgba(79,140,255,.4)}
+  :focus-visible{outline:2px solid var(--accent);outline-offset:2px;border-radius:7px}
+  @media (prefers-reduced-motion: reduce){*{animation-duration:.001ms!important;transition:none!important}}
   ::-webkit-scrollbar{width:10px;height:10px}
   ::-webkit-scrollbar-thumb{background:#26344d;border-radius:10px;border:2px solid transparent;background-clip:padding-box}
   ::-webkit-scrollbar-track{background:transparent}
@@ -69,12 +71,13 @@
   .nav{display:flex;flex-direction:column;gap:3px}
   .nav-label{font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--dim);padding:0 10px 6px}
   .nav-item{
-    display:flex;align-items:center;gap:10px;width:100%;padding:9px 10px;border-radius:10px;
+    position:relative;display:flex;align-items:center;gap:10px;width:100%;padding:9px 10px;border-radius:10px;
     background:transparent;border:1px solid transparent;color:#b9c7dc;font:inherit;font-size:13px;
     font-weight:500;cursor:pointer;text-align:left;transition:.14s;
   }
   .nav-item:hover{background:rgba(255,255,255,.04);color:#e6edf9}
   .nav-item.active{background:linear-gradient(90deg,rgba(79,140,255,.18),rgba(79,140,255,.05));border-color:rgba(79,140,255,.35);color:#eaf2ff;font-weight:600}
+  .nav-item.active::before{content:"";position:absolute;left:-1px;top:9px;bottom:9px;width:2px;border-radius:2px;background:var(--accent)}
   .nav-item .count{
     margin-left:auto;font-family:var(--mono);font-size:10.5px;color:#cdddff;
     background:rgba(79,140,255,.18);padding:1px 7px;border-radius:999px;
@@ -92,7 +95,11 @@
   .page-sub{color:var(--muted);font-size:12.5px;margin-top:3px}
 
   /* ---------- primitives ---------- */
-  .card{background:linear-gradient(180deg,rgba(255,255,255,.018),rgba(255,255,255,0)),var(--surface);border:1px solid var(--line);border-radius:var(--radius)}
+  .card{
+    background:linear-gradient(180deg,rgba(255,255,255,.022),rgba(255,255,255,0)),var(--surface);
+    border:1px solid var(--line);border-radius:var(--radius);
+    box-shadow:inset 0 1px 0 rgba(255,255,255,.03),0 1px 2px rgba(0,0,0,.25);
+  }
   .card.pad{padding:16px}
   .card-head{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:13px 16px;border-bottom:1px solid var(--line)}
   .card-title{font-size:13px;font-weight:650;letter-spacing:-.1px;margin:0}
@@ -137,7 +144,8 @@
   .pill.plain{font-weight:600;letter-spacing:0}
   .badge-num{font-family:var(--mono);font-size:11px;color:#cdd9ee}
 
-  .tile{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:13px 15px;position:relative;overflow:hidden}
+  .tile{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:13px 15px;position:relative;overflow:hidden;transition:border-color .15s,transform .15s,box-shadow .15s}
+  .tile:hover{border-color:#2c4062;transform:translateY(-1px);box-shadow:0 8px 20px rgba(0,0,0,.28)}
   .tile::after{content:"";position:absolute;inset:0 auto 0 0;width:2px;background:var(--tilec,var(--accent));opacity:.7}
   .tile .k{font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--dim);font-weight:600}
   .tile .v{font-size:22px;font-weight:700;letter-spacing:-.5px;margin-top:4px;font-variant-numeric:tabular-nums}
@@ -150,8 +158,15 @@
     position:sticky;top:0;z-index:1;white-space:nowrap;
   }
   td{padding:9px 12px;border-bottom:1px solid rgba(29,41,64,.75);font-size:12.5px;vertical-align:middle}
-  tbody tr:hover{background:rgba(79,140,255,.055)}
+  tbody tr:nth-child(even){background:rgba(255,255,255,.012)}
+  tbody tr:hover{background:rgba(79,140,255,.06)}
   tbody tr.click{cursor:pointer}
+  table.wide{min-width:920px}
+  td:first-child,th:first-child{position:sticky;left:0;background:#0d1524;z-index:1;white-space:nowrap}
+  tbody tr:nth-child(even) td:first-child{background:#0f1829}
+  tbody tr:hover td:first-child{background:#12203a}
+  .chev{opacity:.3;transition:.15s}
+  tr:hover .chev{opacity:1;transform:translateX(2px);color:#cfe0ff}
   .num{text-align:right;font-variant-numeric:tabular-nums}
   .scroll{overflow:auto}
   .code{font-family:var(--mono);font-size:11.5px;background:rgba(79,140,255,.12);color:#bcd3ff;padding:1px 5px;border-radius:5px}
@@ -159,8 +174,29 @@
   .bar{height:5px;border-radius:999px;background:rgba(255,255,255,.08);overflow:hidden;min-width:60px}
   .bar > i{display:block;height:100%;border-radius:999px;background:linear-gradient(90deg,#4f8cff,#7c5cff)}
 
-  .empty{padding:40px 20px;text-align:center;color:var(--muted)}
+  .dist{display:flex;height:7px;gap:2px;border-radius:99px;overflow:hidden;background:rgba(255,255,255,.04);margin:12px 0 2px}
+  .dist > span{display:block;height:100%;transition:filter .15s}
+  .dist > span:hover{filter:brightness(1.25)}
+
+  .search{position:relative;display:inline-flex;align-items:center}
+  .search > svg{position:absolute;left:9px;color:var(--dim);pointer-events:none}
+  .search input{padding-left:29px;padding-right:26px}
+  .search .clr{
+    position:absolute;right:5px;width:18px;height:18px;display:grid;place-items:center;border-radius:6px;
+    border:none;background:rgba(255,255,255,.07);color:#b9c8de;cursor:pointer;font-size:11px;line-height:1;
+  }
+  .search .clr:hover{background:rgba(255,255,255,.14);color:#fff}
+
+  .cmp{display:grid;grid-template-columns:62px 1fr 30px;gap:8px;align-items:center;font-size:10px;color:var(--dim);letter-spacing:.03em}
+  .cmp b{display:block;height:4px;border-radius:3px;background:rgba(255,255,255,.08);overflow:hidden}
+  .cmp b > i{display:block;height:100%;border-radius:3px;background:linear-gradient(90deg,#4f8cff,#a78bfa)}
+  .cmp span:last-child{text-align:right;font-variant-numeric:tabular-nums;color:#9fb0cb}
+
+  .empty{padding:44px 20px;text-align:center;color:var(--muted)}
+  .empty svg{opacity:.35;margin-bottom:8px}
   .empty .big{font-size:15px;font-weight:600;color:#cfdcf0;margin-bottom:4px}
+  .empty .hints{display:flex;flex-direction:column;gap:6px;align-items:center;margin-top:14px;font-size:11.5px;color:var(--dim)}
+  .empty .hints span{display:inline-flex;align-items:center;gap:6px}
 
   .overlay{position:fixed;inset:0;z-index:60;background:rgba(3,7,15,.68);backdrop-filter:blur(3px);display:flex}
   .overlay.right{justify-content:flex-end}
@@ -177,10 +213,14 @@
   @keyframes fadeUp{from{transform:translateY(8px);opacity:0}to{transform:none;opacity:1}}
 
   .toast{
-    position:fixed;bottom:20px;right:20px;z-index:80;max-width:380px;
+    position:fixed;bottom:20px;right:20px;z-index:80;max-width:400px;
+    display:flex;gap:9px;align-items:flex-start;
     background:#12203a;border:1px solid #2c4468;border-radius:11px;padding:11px 14px;
     font-size:12.5px;color:#e6eefc;box-shadow:0 18px 50px rgba(0,0,0,.5);animation:fadeUp .18s ease;
   }
+  .toast.err{background:#2a1520;border-color:#6b2b3a;color:#ffd9e0}
+  .toast .tdot{width:7px;height:7px;border-radius:50%;background:var(--ok);margin-top:5px;flex:none;box-shadow:0 0 0 3px rgba(34,197,94,.16)}
+  .toast.err .tdot{background:var(--danger);box-shadow:0 0 0 3px rgba(240,82,82,.16)}
 
   /* ---------- chat ---------- */
   .chat-grid{display:grid;grid-template-columns:minmax(0,1.6fr) minmax(300px,.9fr);gap:16px;align-items:stretch}
@@ -231,7 +271,7 @@
     .chat-grid{grid-template-columns:1fr}
     .chat-card{height:min(64vh,560px)}
   }
-  @media (max-width:860px){
+  @media (max-width:960px){
     .layout{flex-direction:column}
     .rail{position:static;width:100%;height:auto;border-right:none;border-bottom:1px solid var(--line);padding:10px 12px;gap:10px}
     .nav{flex-direction:row;overflow-x:auto;gap:6px}
@@ -262,7 +302,16 @@ const inr = n => (n == null || n === '') ? '—' : '₹' + Number(n).toLocaleStr
 const num = n => (n == null || n === '') ? '—' : Number(n).toLocaleString('en-IN');
 const pct = n => (n == null || n === '') ? '—' : Number(n).toFixed(0) + '%';
 const short = (s, n = 46) => !s ? '' : (s.length > n ? s.slice(0, n - 1) + '…' : s);
+const BASIS = {
+  'contract rate (3.1a)': 'contract rate · 3.1a',
+  'lowest applicable contract rate (3.1a)': 'lowest contract · 3.1a',
+  'most recent PO within 365d (3.1b)': 'recent PO · 3.1b',
+  'item master standard price (3.1c)': 'std price · 3.1c',
+  'requester estimate (1.2)': 'estimate · 1.2',
+};
+const basis = s => BASIS[s] || s || '';
 const today = () => new Date().toISOString().slice(0, 10);
+const plusDays = n => { const d = new Date(); d.setDate(d.getDate() + n); return d.toISOString().slice(0, 10); };
 
 const ROUTES = {
   CONTRACT_PO:       {c: '#22c55e', label: 'Contract PO'},
@@ -290,6 +339,8 @@ const P = {
   bolt: 'M13 2 4 14h6l-1 8 9-12h-6z',
   search:'M11 18a7 7 0 1 0 0-14 7 7 0 0 0 0 14zM20 21l-4-4',
   refresh:'M20 11a8 8 0 1 0-2.3 5.7M20 5v6h-6',
+  alert:'M12 9v4m0 3.5h.01M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0z',
+  inbox:'M4 13h4l2 3h4l2-3h4M4 13 6 4h12l2 9v5a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2z',
 };
 function Icon({name, size = 15, cls = ''}) {
   return html`<svg class=${cls} width=${size} height=${size} viewBox="0 0 24 24" fill="none"
@@ -305,7 +356,18 @@ function Pill({children, color, plain}) {
 }
 function RoutePill({route}) {
   const r = ROUTES[route] || {c: '#94a3b8', label: route};
-  return html`<${Pill} color=${r.c}>${r.label}<//>`;
+  return html`<${Pill} color=${r.c}>
+    <i style=${{width: '6px', height: '6px', borderRadius: '50%', background: r.c, display: 'inline-block'}}></i>
+    ${r.label}
+  <//>`;
+}
+
+function contractState(c) {
+  const t = today();
+  if (c.end_date < t) return {t: 'expired', c: '#64748b'};
+  const days = Math.round((new Date(c.end_date + 'T00:00:00') - new Date(t + 'T00:00:00')) / 86400000);
+  if (days <= 60) return {t: 'ends in ' + days + 'd', c: '#f5a524'};
+  return {t: 'active', c: '#22c55e'};
 }
 function StatusPill({status}) {
   const map = {pending: '#f5a524', approved: '#22c55e', overridden: '#a78bfa'};
@@ -319,8 +381,13 @@ function Rich({text}) {
     return html`<span key=${i}>${t}</span>`;
   })}</span>`;
 }
-function Empty({title, children}) {
-  return html`<div class="empty"><div class="big">${title}</div><div class="small">${children}</div></div>`;
+function Empty({title, children, icon, hints}) {
+  return html`<div class="empty">
+    ${icon ? html`<${Icon} name=${icon} size=${22} />` : null}
+    <div class="big">${title}</div>
+    <div class="small">${children}</div>
+    ${hints ? html`<div class="hints">${hints.map((h, i) => html`<span key=${i}>✓ ${h}</span>`)}</div>` : null}
+  </div>`;
 }
 function Bar({value}) {
   const v = Math.max(0, Math.min(1, value || 0));
@@ -418,7 +485,9 @@ function App() {
         ${tab === 'contracts' && html`<${Contracts} role=${role} flash=${flash} />`}
         ${tab === 'audit' && html`<${Audit} flash=${flash} />`}
 
-        ${toast && html`<div class="toast">${toast}</div>`}
+        ${toast && html`<div class=${'toast' + (/^error/i.test(toast) ? ' err' : '')}>
+          <span class="tdot"></span><span>${toast}</span>
+        </div>`}
       </main>
     </div>
   </div>`;
@@ -439,8 +508,11 @@ function Chat({role, flash, go}) {
   const [text, setText] = useState('');
   const [draft, setDraft] = useState(null);
   const [busy, setBusy] = useState(false);
-  const end = useRef();
-  useEffect(() => { if (end.current) end.current.scrollIntoView({behavior: 'smooth'}); }, [msgs, busy]);
+  const log = useRef();
+  // Scroll the message list itself — scrollIntoView on a child also moves the whole page.
+  useEffect(() => {
+    if (log.current) log.current.scrollTop = log.current.scrollHeight;
+  }, [msgs, busy]);
   const push = (who, text, extra) => setMsgs(m => [...m, {who, text, ...extra}]);
 
   async function send(raw) {
@@ -470,7 +542,7 @@ function Chat({role, flash, go}) {
         return !d[m];
       });
       if (missing.length) {
-        push('bot', 'Still needed: ' + missing.map(m => labels[m] || m).join(', ') + '.');
+        push('bot', 'Still needed: ' + missing.map(m => labels[m] || m).join(', ') + '.', {slots: missing});
       } else {
         push('bot', 'All set — check the draft and create the PR.');
       }
@@ -480,6 +552,10 @@ function Chat({role, flash, go}) {
   function pick(c) {
     setDraft(d => ({...d, item_code: c.item_code, description: c.description}));
     push('bot', `Using ${c.item_code} — ${c.description}.`);
+  }
+  function quick(field, value, label) {
+    setDraft(d => ({...d, [field]: value}));
+    push('bot', `${label} added.`);
   }
   async function create() {
     setBusy(true);
@@ -509,7 +585,7 @@ function Chat({role, flash, go}) {
 
     <div class="chat-grid">
       <div class="card chat-card">
-        <div class="chat-log">
+        <div class="chat-log" ref=${log}>
           ${msgs.map((m, i) => html`<div key=${i} class=${'msg ' + (m.who === 'me' ? 'me' : '')}>
             <div class=${'avatar ' + (m.who === 'me' ? 'me' : 'bot')}>${m.who === 'me' ? 'ME' : 'AI'}</div>
             <div>
@@ -522,15 +598,21 @@ function Chat({role, flash, go}) {
                   <span class="dim mono" style=${{marginLeft: 'auto'}}>${c.score}</span>
                 </button>`)}
               </div>` : null}
+              ${m.slots && (m.slots.includes('plant') || m.slots.includes('need_by_date')) ? html`<div class="row" style=${{marginTop: '8px', gap: '6px'}}>
+                ${m.slots.includes('plant') ? html`
+                  <button class="btn ghost sm" onClick=${() => quick('plant', 'PUN1', 'Pune (PUN1)')}>Pune · PUN1</button>
+                  <button class="btn ghost sm" onClick=${() => quick('plant', 'CHK1', 'Chakan (CHK1)')}>Chakan · CHK1</button>` : null}
+                ${m.slots.includes('need_by_date') ? html`
+                  <button class="btn ghost sm" onClick=${() => quick('need_by_date', plusDays(3), 'Need-by in 3 days')}>in 3 days</button>
+                  <button class="btn ghost sm" onClick=${() => quick('need_by_date', plusDays(14), 'Need-by in 2 weeks')}>in 2 weeks</button>` : null}
+              </div>` : null}
             </div>
           </div>`)}
           ${busy && html`<div class="msg"><div class="avatar bot">AI</div><div class="bubble dim">…</div></div>`}
-          <div ref=${end}></div>
+          ${msgs.length <= 1 && html`<div class="suggest" style=${{padding: '2px 0 0', marginLeft: '35px'}}>
+            ${EXAMPLES.map(x => html`<button key=${x} onClick=${() => send(x)}>${x}</button>`)}
+          </div>`}
         </div>
-
-        ${msgs.length <= 1 && html`<div class="suggest">
-          ${EXAMPLES.map(x => html`<button key=${x} onClick=${() => send(x)}>${x}</button>`)}
-        </div>`}
 
         <div class="composer">
           <input class="input" placeholder="e.g. 200 nitrile gloves for Chakan by next Friday"
@@ -550,7 +632,12 @@ function Chat({role, flash, go}) {
         </div>
         <div class="card-sub" style=${{marginBottom: '10px'}}>Filled from the conversation.</div>
 
-        ${!draft && html`<${Empty} title="Nothing yet">Type a request on the left and the fields fill in here.<//>`}
+        ${!draft && html`<div style=${{flex: 1, display: 'grid', placeItems: 'center'}}>
+          <${Empty} icon="chat" title="Nothing yet"
+            hints=${['item matched from free text', 'only missing fields asked', 'never an invented code']}>
+            Type a request on the left and the fields fill in here.
+          <//>
+        </div>`}
 
         ${draft && html`<div style=${{display: 'flex', flexDirection: 'column', flex: 1}}>
           <div>
@@ -616,6 +703,9 @@ function Buyer({role, flash, reqs, setReqs, meta, runInfo, setRunInfo}) {
   const poValue = pos.reduce((a, r) => a + (r.value || 0), 0);
   const srcValue = sourcing.reduce((a, r) => a + (r.value || 0), 0);
   const lines = reqs.reduce((a, r) => a + (r.lines ? r.lines.length : 0), 0);
+  const poCount = new Set(pos.map(r => r.po_id).filter(Boolean)).size;
+  const flagged = reqs.filter(r => r.route === 'NEW_ITEM_SOURCING'
+    || (r.lines || []).some(l => /review|no confident|no item_code/.test(l.match_note || ''))).length;
 
   const routeCounts = {};
   reqs.forEach(r => { routeCounts[r.route] = (routeCounts[r.route] || 0) + 1; });
@@ -654,10 +744,10 @@ function Buyer({role, flash, reqs, setReqs, meta, runInfo, setRunInfo}) {
     <div style=${{display: 'grid', gridTemplateColumns: 'repeat(auto-fit,minmax(155px,1fr))', gap: '10px'}}>
       ${[
         ['Requirements', num(reqs.length), lines + ' PR lines', '#4f8cff'],
-        ['PO-bound', num(pos.length), inr(poValue) + ' committed', '#22c55e'],
-        ['Sourcing', num(sourcing.length), inr(srcValue) + ' to source', '#a78bfa'],
-        ['POs', num(new Set(pos.map(r => r.po_id).filter(Boolean)).size), 'after consolidation (§7)', '#38bdf8'],
-        ['Needs review', num(reqs.filter(r => r.status === 'pending').length), 'pending approval', '#f5a524'],
+        ['PO value', inr(poValue), pos.length + ' requirements', '#22c55e'],
+        ['To source', inr(srcValue), sourcing.length + ' requirements', '#a78bfa'],
+        ['Consolidated POs', num(poCount), 'policy §7', '#38bdf8'],
+        ['Flagged', num(flagged), 'match or new item', '#f5a524'],
       ].map(([k, v, s, c]) => html`<div class="tile" key=${k} style=${{'--tilec': c}}>
         <div class="k">${k}</div><div class="v">${v}</div><div class="s">${s}</div>
       </div>`)}
@@ -676,16 +766,23 @@ function Buyer({role, flash, reqs, setReqs, meta, runInfo, setRunInfo}) {
         </label>
         <div class="spacer"></div>
         <div class="row" style=${{gap: '6px'}}>
-          <div style=${{position: 'relative'}}>
-            <span style=${{position: 'absolute', left: '8px', top: '50%', transform: 'translateY(-50%)', color: 'var(--dim)'}}>
-              <${Icon} name="search" size=${13} /></span>
-            <input class="input compact" style=${{paddingLeft: '27px', width: '220px'}} placeholder="Search item, PR, supplier…"
+          <span class="tiny dim">${shown.length}/${reqs.length}</span>
+          <div class="search">
+            <${Icon} name="search" size=${13} />
+            <input class="input compact" style=${{width: '230px'}} placeholder="Search item, PR, supplier…"
               value=${q} onChange=${e => setQ(e.target.value)} />
+            ${q && html`<button class="clr" aria-label="Clear search" onClick=${() => setQ('')}>✕</button>`}
           </div>
         </div>
       </div>
 
-      ${reqs.length > 0 && html`<div class="row" style=${{marginTop: '12px'}}>
+      ${reqs.length > 0 && html`<div class="dist" title="Route mix — click a chip below to filter">
+        ${Object.entries(routeCounts).sort((a, b) => b[1] - a[1]).map(([rt, n]) => html`
+          <span key=${rt} style=${{width: (n / reqs.length * 100) + '%', background: (ROUTES[rt] || {}).c || '#94a3b8'}}
+            title=${((ROUTES[rt] || {}).label || rt) + ': ' + n}></span>`)}
+      </div>`}
+
+      ${reqs.length > 0 && html`<div class="row" style=${{marginTop: '10px'}}>
         <button class=${'btn sm ' + (!route ? 'primary' : 'ghost')} onClick=${() => setRoute('')}>All · ${reqs.length}</button>
         ${Object.entries(routeCounts).sort((a, b) => b[1] - a[1]).map(([rt, n]) => html`
           <button key=${rt} class=${'btn sm ' + (route === rt ? 'primary' : 'ghost')} onClick=${() => setRoute(rt)}>
@@ -697,12 +794,12 @@ function Buyer({role, flash, reqs, setReqs, meta, runInfo, setRunInfo}) {
 
     <div class="card scroll" style=${{maxHeight: 'calc(100vh - 360px)', minHeight: '260px'}}>
       ${!reqs.length
-        ? html`<${Empty} title="No decisions yet">
-            Process the sample batch (186 lines from the kit) or upload your own CSV. Every decision records
-            the policy clause it came from.<//>`
+        ? html`<${Empty} icon="inbox" title="No decisions yet"
+            hints=${['186-line sample batch ready', 'or upload your own CSV', 'clause + version on every row']}>
+            Process the sample batch or upload a PR batch. Each decision records the policy clause it came from.<//>`
         : !shown.length
-        ? html`<${Empty} title="Nothing matches that filter">Clear the search or pick another route.<//>`
-        : html`<table>
+        ? html`<${Empty} icon="search" title="Nothing matches that filter">Clear the search or pick another route.<//>`
+        : html`<table class="wide">
           <thead><tr>
             ${['Group', 'Item', 'Plant', 'Qty', 'Value', 'Route', 'Outcome', 'Status', ''].map(h => html`<th key=${h}>${h}</th>`)}
           </tr></thead>
@@ -721,7 +818,7 @@ function Buyer({role, flash, reqs, setReqs, meta, runInfo, setRunInfo}) {
               <td class="num">${num(r.total_quantity)}</td>
               <td class="num">
                 <div>${inr(r.value)}</div>
-                <div class="tiny dim">${r.value_basis || ''}</div>
+                <div class="tiny dim">${basis(r.value_basis)}</div>
               </td>
               <td><${RoutePill} route=${r.route} /></td>
               <td>
@@ -732,7 +829,7 @@ function Buyer({role, flash, reqs, setReqs, meta, runInfo, setRunInfo}) {
                          <div class="tiny dim">ranked suggestions</div>`}
               </td>
               <td><${StatusPill} status=${r.status} /></td>
-              <td class="dim"><${Icon} name="arrow" size=${14} /></td>
+              <td class="dim"><span class="chev"><${Icon} name="arrow" size=${14} /></span></td>
             </tr>`)}
           </tbody>
         </table>`}
@@ -869,9 +966,14 @@ function ReqDrawer({r, role, flash, onClose, onChanged}) {
                             ${s.po_count} PO${s.po_count === 1 ? '' : 's'} in 548d ·
                             last ${s.last_po_date || '—'} · on-time ${pct(s.on_time_pct)} · quality ${s.quality_rating}/5
                           </div>
-                          <div class="meter" title="frequency · recency · contract · on-time · quality">
-                            ${['frequency', 'recency', 'contract', 'on_time', 'quality'].map(k =>
-                              html`<i key=${k}><b style=${{width: ((s.components[k] || 0) * 100).toFixed(0) + '%'}}></b></i>`)}
+                          <div style=${{marginTop: '7px', display: 'grid', gap: '3px', maxWidth: '330px'}}>
+                            ${[['frequency', 'Frequency'], ['recency', 'Recency'], ['contract', 'Contract'],
+                               ['on_time', 'On-time'], ['quality', 'Quality']].map(([k, lab]) => html`
+                              <div class="cmp" key=${k}>
+                                <span>${lab}</span>
+                                <b><i style=${{width: ((s.components[k] || 0) * 100).toFixed(0) + '%'}}></i></b>
+                                <span>${Math.round((s.components[k] || 0) * 100)}</span>
+                              </div>`)}
                           </div>
                         </div>
                         <div style=${{textAlign: 'right', minWidth: '86px'}}>
@@ -1154,14 +1256,17 @@ function Contracts({role, flash}) {
     </div>
 
     <div class="card scroll" style=${{maxHeight: 'calc(100vh - 330px)'}}>
-      <table>
+      <table class="wide">
         <thead><tr>${['Contract', 'Supplier', 'Validity', 'Ceiling', 'Consumed', 'Utilisation', 'Source', 'Items'].map(h => html`<th key=${h}>${h}</th>`)}</tr></thead>
         <tbody>${cs.map(c => {
           const u = c.value_cap ? Math.min(c.consumed_value / c.value_cap, 1) : 0;
+          const st = contractState(c);
           return html`<tr key=${c.contract_id}>
             <td class="mono">${c.contract_id}</td>
             <td><div class="mono small">${c.supplier_id}</div><div class="tiny dim">${c.supplier_name}</div></td>
-            <td class="tiny">${c.start_date} → ${c.end_date}</td>
+            <td class="tiny">${c.start_date} → ${c.end_date}
+              <div style=${{marginTop: '4px'}}><${Pill} color=${st.c}>${st.t}<//></div>
+            </td>
             <td class="num">${inr(c.value_cap)}</td>
             <td class="num">${inr(c.consumed_value)}</td>
             <td><div class="row" style=${{gap: '7px'}}>
@@ -1217,6 +1322,7 @@ function Audit({flash}) {
   const [rows, setRows] = useState([]);
   const [action, setAction] = useState('');
   const [q, setQ] = useState('');
+  const [openRow, setOpenRow] = useState(null);
   const load = () => api('/audit?limit=200').then(setRows).catch(e => flash('Error: ' + e));
   useEffect(() => { load(); }, []);
   const actions = [...new Set(rows.map(r => r.action))];
@@ -1250,12 +1356,14 @@ function Audit({flash}) {
       ${!rows.length ? html`<${Empty} title="Nothing logged yet">Process a batch or approve something to populate the trail.<//>`
       : html`<table>
         <thead><tr><th>When (UTC)</th><th>Actor</th><th>Action</th><th>Entity</th><th>Detail</th></tr></thead>
-        <tbody>${shown.map(r => html`<tr key=${r.id}>
+        <tbody>${shown.map(r => html`<tr key=${r.id} class="click" title="Click to expand the detail"
+            onClick=${() => setOpenRow(openRow === r.id ? null : r.id)}>
           <td class="tiny mono dim">${r.ts.replace('T', ' ').slice(0, 19)}</td>
           <td><${Pill} plain>${r.actor}<//></td>
           <td class="mono tiny">${r.action}</td>
           <td class="tiny">${r.entity}</td>
-          <td class="tiny dim" style=${{maxWidth: '520px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap'}}>${r.detail}</td>
+          <td class="tiny dim" style=${{maxWidth: openRow === r.id ? 'none' : '520px', overflow: 'hidden',
+              textOverflow: 'ellipsis', whiteSpace: openRow === r.id ? 'pre-wrap' : 'nowrap', wordBreak: 'break-word'}}>${r.detail}</td>
         </tr>`)}</tbody>
       </table>`}
     </div>
