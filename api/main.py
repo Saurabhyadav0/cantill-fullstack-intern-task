@@ -25,6 +25,27 @@ from . import amend, chat, db
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 WEB_DIR = os.path.join(ROOT, "web")
 
+
+def _load_env(path):
+    """Read KEY=VALUE pairs from .env (optional; no third-party dependency).
+
+    Only used for the optional ANTHROPIC_API_KEY — real environment variables win.
+    """
+    if not os.path.exists(path):
+        return
+    with open(path, encoding="utf-8") as f:
+        for line in f:
+            line = line.strip()
+            if not line or line.startswith("#") or "=" not in line:
+                continue
+            key, value = line.split("=", 1)
+            key, value = key.strip(), value.strip().strip('"').strip("'")
+            if key and value and key not in os.environ:
+                os.environ[key] = value
+
+
+_load_env(os.path.join(ROOT, ".env"))
+
 app = FastAPI(title="Corvo PR->PO", version="1.0")
 
 _BASE_MD: MasterData = None            # master data from CSV (reference)
@@ -60,7 +81,10 @@ def _master_data(con) -> MasterData:
 
 
 def _active_policy(con, as_of=None) -> Policy:
-    return Policy(db.active_policy_doc(con, as_of))
+    doc = db.active_policy_doc(con, as_of)
+    if doc is None:
+        raise HTTPException(503, "no policy seeded — place docs/policy-v5.json (see docs/README.md)")
+    return Policy(doc)
 
 
 @app.on_event("startup")
@@ -86,13 +110,18 @@ def health():
 def meta():
     con = db.connect()
     md = _master_data(con)
-    pol = _active_policy(con)
+    try:
+        pol = _active_policy(con)
+        policy_info = {"version": pol.version, "effective_date": pol.effective_date}
+    except HTTPException:
+        policy_info = None
     con.close()
     return {
+        "ready": bool(policy_info and md.items),
         "plants": [{"plant": p, "name": n} for p, n in md.plants],
         "counts": {"items": len(md.items), "suppliers": len(md.suppliers),
                    "contracts": len(md.contracts), "po_history": len(md.po_history)},
-        "active_policy": {"version": pol.version, "effective_date": pol.effective_date},
+        "active_policy": policy_info,
     }
 
 
@@ -104,6 +133,28 @@ def items(q: str = "", limit: int = 20):
     return [{"item_code": it.item_code, "description": it.description, "uom": it.uom,
              "category": it.category, "item_type": it.item_type,
              "standard_price": it.standard_price} for it in out[:limit]]
+
+
+@app.get("/api/items/{item_code}/preferred")
+def item_preferred(item_code: str, as_of: str = None):
+    """Preferred-supplier list for one item with the ranking breakdown (policy 6.1-6.3).
+
+    Powers the buyer's "why is this supplier first?" panel; the raw engine score
+    components come straight from the policy's ranking weights.
+    """
+    con = db.connect()
+    md = _master_data(con)
+    pol = _active_policy(con)
+    con.close()
+    item = md.items_by_code.get(item_code)
+    if item is None:
+        raise HTTPException(404, f"unknown item: {item_code}")
+    as_of_date = _parse_date(as_of) or date.today()
+    pe = PreferredEngine(md, pol)
+    return {"item_code": item.item_code, "description": item.description,
+            "category": item.category, "as_of": as_of_date.isoformat(),
+            "weights": pe.weights, "eligibility_lookback_days": pe.elig_days,
+            "ranked": pe.ranked_list_detailed(item_code, as_of_date)[:10]}
 
 
 @app.get("/api/suppliers")

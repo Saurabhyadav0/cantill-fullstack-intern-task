@@ -60,17 +60,23 @@ def init_db(seed=True):
     if seed:
         cur = con.execute("SELECT COUNT(*) AS n FROM policies")
         if cur.fetchone()["n"] == 0:
-            with open(POLICY_V5, encoding="utf-8") as f:
-                body = f.read()
-            doc = json.loads(body)
-            con.execute(
-                "INSERT INTO policies(version,effective_date,status,body,summary,created_by,created_at)"
-                " VALUES(?,?,?,?,?,?,?)",
-                (str(doc.get("version", "5.0")), doc.get("effective_date", "2026-04-01"),
-                 "active", body, "Seed policy v5.0", "system", datetime.utcnow().isoformat()),
-            )
-            con.commit()
-            audit(con, "system", "seed", "policy", "seeded v5.0")
+            # Boot must survive a deploy that has not been given the (gitignored)
+            # policy document yet: log it and let /api/meta report `ready: false`.
+            try:
+                with open(POLICY_V5, encoding="utf-8") as f:
+                    body = f.read()
+                doc = json.loads(body)
+            except (OSError, ValueError) as exc:
+                print(f"[db] policy not seeded — {POLICY_V5}: {exc}")
+            else:
+                con.execute(
+                    "INSERT INTO policies(version,effective_date,status,body,summary,created_by,created_at)"
+                    " VALUES(?,?,?,?,?,?,?)",
+                    (str(doc.get("version", "5.0")), doc.get("effective_date", "2026-04-01"),
+                     "active", body, "Seed policy v5.0", "system", datetime.utcnow().isoformat()),
+                )
+                con.commit()
+                audit(con, "system", "seed", "policy", "seeded v5.0")
     con.close()
 
 
@@ -100,9 +106,12 @@ def active_policy_doc(con, as_of: date = None):
         rows = [r for r in rows if r["effective_date"] <= as_of.isoformat()]
     for r in rows:
         return json.loads(r["body"])
-    # fallback to file
-    with open(POLICY_V5, encoding="utf-8") as f:
-        return json.load(f)
+    # fallback to file (returns None when the gitignored document is not present)
+    try:
+        with open(POLICY_V5, encoding="utf-8") as f:
+            return json.load(f)
+    except (OSError, ValueError):
+        return None
 
 
 def insert_policy(con, doc, status, summary, parent_version, actor):

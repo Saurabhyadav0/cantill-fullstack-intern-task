@@ -116,6 +116,57 @@ class PreferredEngine:
         scored.sort(key=lambda x: (-x[1], -x[3], -x[0].on_time_pct, x[0].supplier_id))
         return [(s, score, ref) for (s, score, ref, _, _) in scored]
 
+    def ranked_list_detailed(self, item_code, as_of: date):
+        """Preferred list with the score breakdown behind each rank (policy 6.1-6.3).
+
+        Same ordering as ranked_list(), but returns plain dicts (with components and
+        weights) so the buyer UI can explain *why* a supplier ranks where it does.
+        """
+        candidates = []
+        for s in self.md.suppliers:
+            if s.status in self.guard:          # Active-only list (6.1 + 5.7)
+                continue
+            pos = self._pos_for(item_code, s.supplier_id, as_of, self.elig_days)
+            has_contract = bool(self._contracts_for(item_code, s.supplier_id, as_of))
+            if not pos and not has_contract:
+                continue
+            candidates.append((s, pos, has_contract))
+        if not candidates:
+            return []
+        max_count = max((len(pos) for _, pos, _ in candidates), default=0) or 1
+
+        w = self.weights
+        scored = []
+        for s, pos, has_contract in candidates:
+            freq = len(pos) / max_count
+            recency = self._recency(item_code, s.supplier_id, as_of)
+            score = (
+                w.get("po_frequency_548d", 0.30) * freq
+                + w.get("recency", 0.25) * recency
+                + w.get("held_contract", 0.20) * (1.0 if has_contract else 0.0)
+                + w.get("on_time_pct", 0.15) * (s.on_time_pct / 100.0)
+                + w.get("quality_rating", 0.10) * (s.quality_rating / 5.0)
+            )
+            scored.append({
+                "supplier_id": s.supplier_id, "name": s.name, "status": s.status,
+                "score": score, "reference_price": self.reference_price(item_code, s.supplier_id, as_of),
+                "po_count": len(pos), "has_contract": has_contract,
+                "last_po_date": max((po.po_date for po in pos), default=None),
+                "on_time_pct": s.on_time_pct, "quality_rating": s.quality_rating,
+                "components": {"frequency": freq, "recency": recency,
+                               "contract": 1.0 if has_contract else 0.0,
+                               "on_time": s.on_time_pct / 100.0,
+                               "quality": s.quality_rating / 5.0},
+            })
+        # tie-break: score, then po count, then on-time, then supplier_id
+        scored.sort(key=lambda x: (-x["score"], -x["po_count"], -x["on_time_pct"], x["supplier_id"]))
+        for i, row in enumerate(scored, start=1):
+            row["rank"] = i
+            row["score"] = round(row["score"], 4)
+            row["components"] = {k: round(v, 4) for k, v in row["components"].items()}
+            row["last_po_date"] = row["last_po_date"].isoformat() if row["last_po_date"] else None
+        return scored
+
     def suggestions(self, item_code, category, as_of: date, n: int):
         """Preferred list topped up from the item's category (policy 6.4)."""
         ranked = self.ranked_list(item_code, as_of)

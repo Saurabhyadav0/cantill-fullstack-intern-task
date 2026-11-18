@@ -3,270 +3,1266 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Corvo Procurement — PR→PO</title>
-<script src="https://cdn.tailwindcss.com/3.4.16"></script>
+<title>Corvo Procurement — PR → PO</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.3.1/umd/react.production.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.3.1/umd/react-dom.production.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/htm/3.1.1/htm.min.js"></script>
 <style>
-  body{background:#0b1020;color:#e7ecf5}
-  .card{background:#131a2e;border:1px solid #243049;border-radius:14px}
-  .btn{border-radius:10px;padding:.5rem .9rem;font-weight:600;transition:.15s}
-  .btn-p{background:#3b82f6;color:#fff} .btn-p:hover{background:#2f6fe0}
-  .btn-g{background:#1e293b;color:#cbd5e1;border:1px solid #334155} .btn-g:hover{background:#273449}
-  .pill{font-size:11px;padding:2px 8px;border-radius:999px;font-weight:700}
-  .in{background:#0e1526;border:1px solid #2a3650;border-radius:10px;padding:.5rem .7rem;color:#e7ecf5;width:100%}
-  table{border-collapse:collapse;width:100%} th,td{text-align:left;padding:.5rem .6rem;border-bottom:1px solid #1e2740;font-size:13px;vertical-align:top}
-  th{color:#8ea0c0;font-weight:600;position:sticky;top:0;background:#131a2e}
-  ::-webkit-scrollbar{height:9px;width:9px}::-webkit-scrollbar-thumb{background:#2a3650;border-radius:9px}
+  :root{
+    --bg:#070b14; --surface:#0d1524; --surface-2:#111b2d; --surface-3:#152137;
+    --line:#1d2940; --line-2:#2a3a58; --text:#e9eef9; --muted:#8b9cba; --dim:#5f7392;
+    --accent:#4f8cff; --accent-2:#7aa7ff; --ok:#22c55e; --warn:#f5a524; --danger:#f05252;
+    --purple:#a78bfa; --cyan:#38bdf8; --pink:#f472b6; --slate:#94a3b8;
+    --radius:14px; --radius-sm:10px;
+    --mono:ui-monospace,SFMono-Regular,Menlo,monospace;
+    --sans:-apple-system,BlinkMacSystemFont,"Segoe UI",Inter,Roboto,Helvetica,Arial,sans-serif;
+  }
+  *{box-sizing:border-box}
+  html,body,#root{min-height:100%}
+  body{
+    margin:0;color:var(--text);font-family:var(--sans);font-size:14px;line-height:1.5;
+    -webkit-font-smoothing:antialiased;
+    background:
+      radial-gradient(1100px 520px at 8% -12%, rgba(79,140,255,.16), transparent 60%),
+      radial-gradient(900px 480px at 104% 0%, rgba(167,139,250,.12), transparent 55%),
+      var(--bg);
+    background-attachment:fixed;
+  }
+  ::selection{background:rgba(79,140,255,.35)}
+  ::-webkit-scrollbar{width:10px;height:10px}
+  ::-webkit-scrollbar-thumb{background:#26344d;border-radius:10px;border:2px solid transparent;background-clip:padding-box}
+  ::-webkit-scrollbar-track{background:transparent}
+  a{color:var(--accent-2)}
+
+  /* ---------- shell ---------- */
+  .app{display:flex;flex-direction:column;min-height:100vh}
+  .topbar{
+    position:sticky;top:0;z-index:30;display:flex;align-items:center;justify-content:space-between;
+    gap:18px;padding:11px 22px;border-bottom:1px solid var(--line);
+    background:rgba(7,11,20,.82);backdrop-filter:blur(16px);
+  }
+  .brand{display:flex;align-items:center;gap:12px;min-width:0}
+  .logo{
+    width:36px;height:36px;border-radius:11px;flex:none;display:grid;place-items:center;
+    font-weight:800;font-size:16px;color:#fff;letter-spacing:-.5px;
+    background:linear-gradient(150deg,#5b95ff,#7c5cff);
+    box-shadow:0 8px 22px rgba(79,140,255,.35), inset 0 1px 0 rgba(255,255,255,.35);
+  }
+  .brand-name{font-weight:700;font-size:15px;letter-spacing:-.2px}
+  .brand-sub{font-size:11.5px;color:var(--muted);letter-spacing:.02em}
+  .topbar-right{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+  .policy-chip{
+    display:flex;align-items:center;gap:8px;padding:6px 11px;border-radius:999px;
+    border:1px solid rgba(34,197,94,.35);background:rgba(34,197,94,.09);
+    font-size:11.5px;color:#b7ecc9;white-space:nowrap;
+  }
+  .dot{width:6px;height:6px;border-radius:50%;background:currentColor;box-shadow:0 0 0 3px rgba(34,197,94,.16)}
+  .dot.warn{color:var(--warn);box-shadow:0 0 0 3px rgba(245,165,36,.16)}
+  .role{display:flex;align-items:center;gap:8px;font-size:11.5px;color:var(--muted)}
+
+  .layout{display:flex;align-items:stretch;flex:1;min-height:0}
+  .rail{
+    width:225px;flex:none;border-right:1px solid var(--line);padding:18px 12px;
+    display:flex;flex-direction:column;gap:18px;
+    position:sticky;top:59px;height:calc(100vh - 59px);
+  }
+  .nav{display:flex;flex-direction:column;gap:3px}
+  .nav-label{font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--dim);padding:0 10px 6px}
+  .nav-item{
+    display:flex;align-items:center;gap:10px;width:100%;padding:9px 10px;border-radius:10px;
+    background:transparent;border:1px solid transparent;color:#b9c7dc;font:inherit;font-size:13px;
+    font-weight:500;cursor:pointer;text-align:left;transition:.14s;
+  }
+  .nav-item:hover{background:rgba(255,255,255,.04);color:#e6edf9}
+  .nav-item.active{background:linear-gradient(90deg,rgba(79,140,255,.18),rgba(79,140,255,.05));border-color:rgba(79,140,255,.35);color:#eaf2ff;font-weight:600}
+  .nav-item .count{
+    margin-left:auto;font-family:var(--mono);font-size:10.5px;color:#cdddff;
+    background:rgba(79,140,255,.18);padding:1px 7px;border-radius:999px;
+  }
+  .nav-item svg{flex:none;opacity:.85}
+
+  .rail-card{margin-top:auto;border:1px solid var(--line);border-radius:12px;padding:12px;background:rgba(17,27,45,.5)}
+  .rail-card h4{margin:0 0 8px;font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--dim);font-weight:600}
+  .rail-row{display:flex;justify-content:space-between;font-size:12px;color:var(--muted);padding:2.5px 0}
+  .rail-row b{color:#dae5f7;font-family:var(--mono);font-weight:600}
+
+  .main{flex:1;min-width:0;padding:22px 26px 40px;max-width:1560px}
+  .page-head{display:flex;align-items:flex-end;justify-content:space-between;gap:16px;flex-wrap:wrap;margin-bottom:16px}
+  .page-title{font-size:20px;font-weight:700;letter-spacing:-.3px;margin:0}
+  .page-sub{color:var(--muted);font-size:12.5px;margin-top:3px}
+
+  /* ---------- primitives ---------- */
+  .card{background:linear-gradient(180deg,rgba(255,255,255,.018),rgba(255,255,255,0)),var(--surface);border:1px solid var(--line);border-radius:var(--radius)}
+  .card.pad{padding:16px}
+  .card-head{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:13px 16px;border-bottom:1px solid var(--line)}
+  .card-title{font-size:13px;font-weight:650;letter-spacing:-.1px;margin:0}
+  .card-sub{font-size:11.5px;color:var(--muted)}
+  .stack{display:flex;flex-direction:column;gap:14px}
+  .row{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+  .spacer{flex:1}
+  .muted{color:var(--muted)} .dim{color:var(--dim)} .mono{font-family:var(--mono)}
+  .tiny{font-size:11px} .small{font-size:12px}
+
+  .btn{
+    display:inline-flex;align-items:center;justify-content:center;gap:7px;
+    border-radius:9px;border:1px solid var(--line-2);background:var(--surface-2);color:#dbe6f7;
+    padding:7px 12px;font:inherit;font-size:12.5px;font-weight:600;cursor:pointer;
+    transition:.14s;white-space:nowrap;
+  }
+  .btn:hover{background:var(--surface-3);border-color:#38507a;color:#fff}
+  .btn.primary{background:linear-gradient(180deg,#5a93ff,#3a72e6);border-color:#6b9dff;color:#fff;box-shadow:0 6px 18px rgba(58,114,230,.28)}
+  .btn.primary:hover{background:linear-gradient(180deg,#6b9fff,#4a80f0)}
+  .btn.ghost{background:transparent;border-color:var(--line-2);color:#b8c7dd}
+  .btn.ghost:hover{background:rgba(255,255,255,.045)}
+  .btn.ok{background:linear-gradient(180deg,#28c765,#17a352);border-color:#3ad676;color:#04231a}
+  .btn.sm{padding:4px 9px;font-size:11.5px;border-radius:8px}
+  .btn:disabled{opacity:.42;cursor:not-allowed;box-shadow:none}
+  .btn svg{flex:none}
+
+  .input,select.input,textarea.input{
+    background:#0a1220;border:1px solid var(--line-2);border-radius:9px;color:var(--text);
+    padding:7px 10px;font:inherit;font-size:13px;width:100%;transition:.14s;outline:none;
+  }
+  .input:focus{border-color:#3d63a8;box-shadow:0 0 0 3px rgba(79,140,255,.16)}
+  .input.compact{padding:5px 9px;font-size:12px;width:auto}
+  .field{display:flex;flex-direction:column;gap:5px;margin-bottom:11px}
+  .field label{font-size:10.5px;letter-spacing:.09em;text-transform:uppercase;color:var(--dim);font-weight:600}
+  .hint{font-size:11px;color:var(--dim)}
+
+  .pill{
+    display:inline-flex;align-items:center;gap:5px;font-size:10.5px;font-weight:700;
+    padding:2px 8px;border-radius:999px;letter-spacing:.02em;white-space:nowrap;
+    border:1px solid rgba(255,255,255,.09);background:rgba(255,255,255,.06);color:#c9d6ea;
+  }
+  .pill.plain{font-weight:600;letter-spacing:0}
+  .badge-num{font-family:var(--mono);font-size:11px;color:#cdd9ee}
+
+  .tile{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:13px 15px;position:relative;overflow:hidden}
+  .tile::after{content:"";position:absolute;inset:0 auto 0 0;width:2px;background:var(--tilec,var(--accent));opacity:.7}
+  .tile .k{font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--dim);font-weight:600}
+  .tile .v{font-size:22px;font-weight:700;letter-spacing:-.5px;margin-top:4px;font-variant-numeric:tabular-nums}
+  .tile .s{font-size:11px;color:var(--muted);margin-top:2px}
+
+  table{width:100%;border-collapse:collapse}
+  th{
+    text-align:left;font-size:10.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--dim);
+    font-weight:600;padding:9px 12px;background:#0c1424;border-bottom:1px solid var(--line);
+    position:sticky;top:0;z-index:1;white-space:nowrap;
+  }
+  td{padding:9px 12px;border-bottom:1px solid rgba(29,41,64,.75);font-size:12.5px;vertical-align:middle}
+  tbody tr:hover{background:rgba(79,140,255,.055)}
+  tbody tr.click{cursor:pointer}
+  .num{text-align:right;font-variant-numeric:tabular-nums}
+  .scroll{overflow:auto}
+  .code{font-family:var(--mono);font-size:11.5px;background:rgba(79,140,255,.12);color:#bcd3ff;padding:1px 5px;border-radius:5px}
+
+  .bar{height:5px;border-radius:999px;background:rgba(255,255,255,.08);overflow:hidden;min-width:60px}
+  .bar > i{display:block;height:100%;border-radius:999px;background:linear-gradient(90deg,#4f8cff,#7c5cff)}
+
+  .empty{padding:40px 20px;text-align:center;color:var(--muted)}
+  .empty .big{font-size:15px;font-weight:600;color:#cfdcf0;margin-bottom:4px}
+
+  .overlay{position:fixed;inset:0;z-index:60;background:rgba(3,7,15,.68);backdrop-filter:blur(3px);display:flex}
+  .overlay.right{justify-content:flex-end}
+  .overlay.center{align-items:center;justify-content:center;padding:18px}
+  .drawer{
+    width:min(620px,100%);height:100%;background:var(--surface);border-left:1px solid var(--line);
+    display:flex;flex-direction:column;animation:slideIn .22s cubic-bezier(.2,.8,.3,1);
+  }
+  .drawer-body{flex:1;overflow:auto;padding:18px 20px}
+  .drawer-foot{border-top:1px solid var(--line);padding:13px 20px;background:#0b1322}
+  .modal{width:min(560px,100%);max-height:90vh;overflow:auto;background:var(--surface);border:1px solid var(--line-2);border-radius:16px;box-shadow:0 30px 80px rgba(0,0,0,.55);animation:pop .18s ease}
+  @keyframes slideIn{from{transform:translateX(24px);opacity:.4}to{transform:none;opacity:1}}
+  @keyframes pop{from{transform:scale(.98);opacity:.5}to{transform:none;opacity:1}}
+  @keyframes fadeUp{from{transform:translateY(8px);opacity:0}to{transform:none;opacity:1}}
+
+  .toast{
+    position:fixed;bottom:20px;right:20px;z-index:80;max-width:380px;
+    background:#12203a;border:1px solid #2c4468;border-radius:11px;padding:11px 14px;
+    font-size:12.5px;color:#e6eefc;box-shadow:0 18px 50px rgba(0,0,0,.5);animation:fadeUp .18s ease;
+  }
+
+  /* ---------- chat ---------- */
+  .chat-grid{display:grid;grid-template-columns:minmax(0,1.6fr) minmax(300px,.9fr);gap:16px;align-items:stretch}
+  .chat-card{display:flex;flex-direction:column;height:calc(100vh - 190px);min-height:460px}
+  .chat-log{flex:1;overflow:auto;padding:18px;display:flex;flex-direction:column;gap:12px}
+  .msg{display:flex;gap:9px;max-width:88%}
+  .msg.me{align-self:flex-end;flex-direction:row-reverse}
+  .avatar{width:26px;height:26px;border-radius:8px;flex:none;display:grid;place-items:center;font-size:11px;font-weight:700}
+  .avatar.bot{background:rgba(79,140,255,.18);color:#9dc0ff;border:1px solid rgba(79,140,255,.3)}
+  .avatar.me{background:rgba(34,197,94,.16);color:#8ae3ad;border:1px solid rgba(34,197,94,.3)}
+  .bubble{background:var(--surface-2);border:1px solid var(--line);border-radius:12px;padding:9px 12px;font-size:13px;white-space:pre-wrap}
+  .msg.me .bubble{background:linear-gradient(180deg,#3c74e0,#3161c4);border-color:#4a83f0;color:#fff}
+  .composer{border-top:1px solid var(--line);padding:11px;display:flex;gap:8px;background:#0b1322;border-radius:0 0 var(--radius) var(--radius)}
+  .suggest{display:flex;gap:7px;flex-wrap:wrap;padding:0 18px 12px}
+  .suggest button{
+    font-size:11.5px;padding:5px 10px;border-radius:999px;border:1px dashed var(--line-2);
+    background:transparent;color:#a9bbd6;cursor:pointer;font-family:inherit;
+  }
+  .suggest button:hover{border-color:#3d63a8;color:#dbe9ff;background:rgba(79,140,255,.08)}
+  .slot{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:7px 0;border-bottom:1px dashed rgba(29,41,64,.9);font-size:12.5px}
+  .slot:last-of-type{border-bottom:none}
+  .slot .k{color:var(--muted);display:flex;align-items:center;gap:7px}
+  .tick{width:15px;height:15px;border-radius:50%;display:grid;place-items:center;font-size:9px;border:1px solid var(--line-2);color:transparent;flex:none}
+  .tick.on{background:rgba(34,197,94,.18);border-color:rgba(34,197,94,.5);color:#6ee7a0}
+
+  /* ---------- ranking ---------- */
+  .rank-row{display:grid;grid-template-columns:26px minmax(0,1fr) auto;gap:10px;align-items:center;padding:10px 0;border-bottom:1px solid rgba(29,41,64,.8)}
+  .rank-row:last-child{border-bottom:none}
+  .rank-no{width:24px;height:24px;border-radius:8px;display:grid;place-items:center;font-size:11px;font-weight:700;background:rgba(255,255,255,.06);color:#c5d4ea;border:1px solid var(--line-2)}
+  .rank-row.first .rank-no{background:linear-gradient(180deg,#4f8cff,#3a72e6);color:#fff;border-color:#6b9dff}
+  .meter{display:grid;grid-template-columns:repeat(5,1fr);gap:5px;margin-top:6px}
+  .meter i{height:4px;border-radius:3px;background:rgba(255,255,255,.09);overflow:hidden;position:relative;display:block}
+  .meter i > b{position:absolute;inset:0 auto 0 0;background:linear-gradient(90deg,#4f8cff,#a78bfa);border-radius:3px}
+
+  .kv{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px}
+  .kv .item{background:var(--surface-2);border:1px solid var(--line);border-radius:10px;padding:9px 11px}
+  .kv .item .k{font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:var(--dim);font-weight:600}
+  .kv .item .v{font-size:13px;margin-top:3px;font-weight:600;color:#e6eefc}
+
+  .why{border-left:2px solid rgba(79,140,255,.55);background:linear-gradient(90deg,rgba(79,140,255,.09),transparent);padding:10px 12px;border-radius:0 10px 10px 0;font-size:12.5px;color:#cfdcf0}
+
+  .banner{
+    display:flex;gap:11px;align-items:flex-start;border:1px solid rgba(245,165,36,.35);
+    background:rgba(245,165,36,.08);border-radius:12px;padding:12px 14px;font-size:12.5px;color:#f3ddb6;
+  }
+
+  @media (max-width:1000px){
+    .chat-grid{grid-template-columns:1fr}
+    .chat-card{height:min(64vh,560px)}
+  }
+  @media (max-width:860px){
+    .layout{flex-direction:column}
+    .rail{position:static;width:100%;height:auto;border-right:none;border-bottom:1px solid var(--line);padding:10px 12px;gap:10px}
+    .nav{flex-direction:row;overflow-x:auto;gap:6px}
+    .nav-label{display:none}
+    .nav-item{width:auto;white-space:nowrap}
+    .rail-card{display:none}
+    .main{padding:16px 14px 32px}
+    .topbar{padding:10px 14px}
+    .brand-sub{display:none}
+  }
 </style>
 </head>
 <body>
-<div id="root" class="max-w-7xl mx-auto px-4 py-5"></div>
+<div id="root"></div>
 <script>
 const html = htm.bind(React.createElement);
-const {useState,useEffect,useRef} = React;
-const api = (p,o)=>fetch('/api'+p,o).then(async r=>{const t=await r.text();let j;try{j=JSON.parse(t)}catch{j=t} if(!r.ok) throw (j&&j.detail)||j||r.statusText; return j;});
-const jpost=(p,b)=>api(p,{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify(b)});
-const inr=n=>n==null||n===''?'—':'₹'+Number(n).toLocaleString('en-IN');
-const ROUTE_COLOR={CONTRACT_PO:'#22c55e',EMERGENCY_PO:'#f97316',SPOT_PO:'#38bdf8',RFQ:'#eab308',RFP:'#a78bfa',CAPEX_SOURCING:'#f472b6',NEW_ITEM_SOURCING:'#94a3b8',NOT_PROCESSED:'#64748b'};
+const {useState, useEffect, useRef, useMemo, useCallback} = React;
 
-function Pill({children,color}){return html`<span class="pill" style=${{background:(color||'#334155')+'22',color:color||'#cbd5e1',border:'1px solid '+(color||'#334155')+'55'}}>${children}</span>`}
+/* ------------------------------------------------------------------ utils */
+const api = (p, o) => fetch('/api' + p, o).then(async r => {
+  const t = await r.text(); let j;
+  try { j = JSON.parse(t); } catch { j = t; }
+  if (!r.ok) throw (j && j.detail) || j || r.statusText;
+  return j;
+});
+const jpost = (p, b) => api(p, {method: 'POST', headers: {'content-type': 'application/json'}, body: JSON.stringify(b)});
+const inr = n => (n == null || n === '') ? '—' : '₹' + Number(n).toLocaleString('en-IN', {maximumFractionDigits: 0});
+const num = n => (n == null || n === '') ? '—' : Number(n).toLocaleString('en-IN');
+const pct = n => (n == null || n === '') ? '—' : Number(n).toFixed(0) + '%';
+const short = (s, n = 46) => !s ? '' : (s.length > n ? s.slice(0, n - 1) + '…' : s);
+const today = () => new Date().toISOString().slice(0, 10);
 
-function App(){
-  const [tab,setTab]=useState('chat');
-  const [role,setRole]=useState('Requester');
-  const [meta,setMeta]=useState(null);
-  const [toast,setToast]=useState(null);
-  useEffect(()=>{api('/meta').then(setMeta).catch(e=>setToast(''+e))},[]);
-  const flash=m=>{setToast(m);setTimeout(()=>setToast(null),3000)};
-  const tabs=[['chat','Chat intake'],['buyer','Buyer workspace'],['policy','Policy (data)'],['contracts','Contracts'],['audit','Audit']];
-  return html`
-  <div>
-    <header class="flex items-center justify-between mb-5 flex-wrap gap-3">
-      <div>
-        <div class="text-xl font-bold">Corvo Engineering · PR→PO</div>
-        <div class="text-xs text-slate-400">Policy-driven procurement · ${meta?('v'+meta.active_policy.version+' · eff '+meta.active_policy.effective_date):'…'}
-          ${meta?' · '+meta.counts.items+' items · '+meta.counts.suppliers+' suppliers · '+meta.counts.contracts+' contracts':''}</div>
+const ROUTES = {
+  CONTRACT_PO:       {c: '#22c55e', label: 'Contract PO'},
+  EMERGENCY_PO:      {c: '#f97316', label: 'Emergency PO'},
+  SPOT_PO:           {c: '#38bdf8', label: 'Spot PO'},
+  RFQ:               {c: '#eab308', label: 'RFQ'},
+  RFP:               {c: '#a78bfa', label: 'RFP'},
+  CAPEX_SOURCING:    {c: '#f472b6', label: 'Capex sourcing'},
+  NEW_ITEM_SOURCING: {c: '#94a3b8', label: 'New item sourcing'},
+  NOT_PROCESSED:     {c: '#64748b', label: 'Not processed'},
+};
+
+/* ------------------------------------------------------------------ icons */
+const P = {
+  chat: 'M21 15a2 2 0 0 1-2 2H8l-4 4V5a2 2 0 0 1 2-2h13a2 2 0 0 1 2 2z',
+  grid: 'M4 4h6v6H4zM14 4h6v6h-6zM4 14h6v6H4zM14 14h6v6h-6z',
+  doc:  'M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8zM14 3v5h5M9 13h6M9 17h4',
+  file: 'M9 3h6l4 4v12a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h2zM9 3v6h6',
+  clock:'M12 21a9 9 0 1 0 0-18 9 9 0 0 0 0 18zM12 7v5l3 2',
+  down: 'M12 4v11m0 0 4-4m-4 4-4-4M5 19h14',
+  up:   'M12 20V9m0 0 4 4m-4-4-4 4M5 5h14',
+  x:    'M6 6l12 12M18 6L6 18',
+  check:'M20 6L9 17l-5-5',
+  arrow:'M9 6l6 6-6 6',
+  bolt: 'M13 2 4 14h6l-1 8 9-12h-6z',
+  search:'M11 18a7 7 0 1 0 0-14 7 7 0 0 0 0 14zM20 21l-4-4',
+  refresh:'M20 11a8 8 0 1 0-2.3 5.7M20 5v6h-6',
+};
+function Icon({name, size = 15, cls = ''}) {
+  return html`<svg class=${cls} width=${size} height=${size} viewBox="0 0 24 24" fill="none"
+    stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+    <path d=${P[name] || P.doc} /></svg>`;
+}
+
+/* ------------------------------------------------------------------ atoms */
+function Pill({children, color, plain}) {
+  const c = color || '#94a3b8';
+  return html`<span class=${'pill' + (plain ? ' plain' : '')}
+    style=${{background: c + '1f', color: c, borderColor: c + '55'}}>${children}</span>`;
+}
+function RoutePill({route}) {
+  const r = ROUTES[route] || {c: '#94a3b8', label: route};
+  return html`<${Pill} color=${r.c}>${r.label}<//>`;
+}
+function StatusPill({status}) {
+  const map = {pending: '#f5a524', approved: '#22c55e', overridden: '#a78bfa'};
+  return html`<${Pill} color=${map[status] || '#94a3b8'}>${status}<//>`;
+}
+function Rich({text}) {
+  const tokens = String(text || '').split(/(\*\*[^*]+\*\*|`[^`]+`)/g).filter(Boolean);
+  return html`<span>${tokens.map((t, i) => {
+    if (t.startsWith('**')) return html`<b key=${i}>${t.slice(2, -2)}</b>`;
+    if (t.startsWith('`')) return html`<code key=${i} class="code">${t.slice(1, -1)}</code>`;
+    return html`<span key=${i}>${t}</span>`;
+  })}</span>`;
+}
+function Empty({title, children}) {
+  return html`<div class="empty"><div class="big">${title}</div><div class="small">${children}</div></div>`;
+}
+function Bar({value}) {
+  const v = Math.max(0, Math.min(1, value || 0));
+  return html`<span class="bar"><i style=${{width: (v * 100).toFixed(0) + '%'}}></i></span>`;
+}
+
+/* ------------------------------------------------------------------ app */
+function App() {
+  const [tab, setTab] = useState('chat');
+  const [role, setRole] = useState('Buyer');
+  const [meta, setMeta] = useState(null);
+  const [toast, setToast] = useState(null);
+  const toastTimer = useRef(null);
+  const [reqs, setReqs] = useState([]);
+  const [run, setRun] = useState(null);
+
+  useEffect(() => { api('/meta').then(setMeta).catch(e => setToast('' + e)); }, []);
+  useEffect(() => { api('/requirements').then(rs => setReqs(rs || [])).catch(() => {}); }, []);
+  const flash = useCallback(m => {
+    setToast(m);
+    clearTimeout(toastTimer.current);          // a newer message must not be cleared by an older timer
+    toastTimer.current = setTimeout(() => setToast(null), 3600);
+  }, []);
+
+  const tabs = [
+    ['chat', 'Chat intake', 'chat', null],
+    ['buyer', 'Buyer workspace', 'grid', reqs.length || null],
+    ['policy', 'Policy (data)', 'doc', null],
+    ['contracts', 'Contracts', 'file', null],
+    ['audit', 'Audit trail', 'clock', null],
+  ];
+  const policy = meta && meta.active_policy;
+  const ready = meta ? meta.ready !== false : true;
+
+  return html`<div class="app">
+    <header class="topbar">
+      <div class="brand">
+        <div class="logo">C</div>
+        <div>
+          <div class="brand-name">Corvo Engineering</div>
+          <div class="brand-sub">Policy-driven procurement · PR → PO</div>
+        </div>
       </div>
-      <div class="flex items-center gap-2">
-        <span class="text-xs text-slate-400">Role</span>
-        <select class="in" style=${{width:'auto'}} value=${role} onChange=${e=>setRole(e.target.value)}>
-          ${['Requester','Buyer','Procurement'].map(r=>html`<option key=${r}>${r}</option>`)}
-        </select>
+      <div class="topbar-right">
+        <div class="policy-chip" title="Decisions are interpreted from this policy document — not from code.">
+          <span class=${'dot' + (policy ? '' : ' warn')}></span>
+          ${policy ? `Policy v${policy.version} · effective ${policy.effective_date}` : 'Policy not seeded'}
+        </div>
+        <div class="role">
+          <span>Acting as</span>
+          <select class="input compact" value=${role} onChange=${e => setRole(e.target.value)}>
+            ${['Requester', 'Buyer', 'Procurement'].map(r => html`<option key=${r}>${r}</option>`)}
+          </select>
+        </div>
       </div>
     </header>
-    <nav class="flex gap-2 mb-5 flex-wrap">
-      ${tabs.map(([k,l])=>html`<button key=${k} class=${'btn '+(tab===k?'btn-p':'btn-g')} onClick=${()=>setTab(k)}>${l}</button>`)}
-    </nav>
-    ${tab==='chat'&&html`<${Chat} role=${role} flash=${flash}/>`}
-    ${tab==='buyer'&&html`<${Buyer} role=${role} flash=${flash}/>`}
-    ${tab==='policy'&&html`<${PolicyTab} role=${role} flash=${flash}/>`}
-    ${tab==='contracts'&&html`<${Contracts} role=${role} flash=${flash}/>`}
-    ${tab==='audit'&&html`<${Audit}/>`}
-    ${toast&&html`<div class="fixed bottom-5 right-5 card px-4 py-3 text-sm shadow-xl">${toast}</div>`}
-  </div>`;
-}
 
-/* ---------------- Chat intake ---------------- */
-function Chat({role,flash}){
-  const [msgs,setMsgs]=useState([{who:'bot',text:'Hi! Describe what you need, e.g. "need 200 nitrile gloves for Chakan by next Friday".'}]);
-  const [text,setText]=useState('');
-  const [draft,setDraft]=useState(null);
-  const end=useRef();
-  useEffect(()=>{end.current&&end.current.scrollIntoView()},[msgs]);
-  const push=(who,text,extra)=>setMsgs(m=>[...m,{who,text,...extra}]);
-
-  async function send(){
-    if(!text.trim())return; const t=text; setText(''); push('me',t);
-    try{
-      const r=await jpost('/chat/parse',{text:t}); const i=r.interpretation;
-      let d={...(draft||{}),...Object.fromEntries(Object.entries({item_code:i.resolved_item_code,description:i.resolved_description||r.interpretation.item_phrase,quantity:i.quantity,plant:i.plant,need_by_date:i.need_by_date,urgency:i.urgency}).filter(([,v])=>v!=null&&v!==''))};
-      setDraft(d);
-      if(r.is_new_candidate&&!r.confident_item){ push('bot',`I couldn't match "${i.item_phrase}" to the item master — I'll treat it as a NEW item (goes to sourcing). Confirm or correct the item.`,{cands:r.candidates}); }
-      else if(r.ambiguous){ push('bot',`Did you mean one of these? Pick the right item:`,{cands:r.candidates}); }
-      else if(r.confident_item){ push('bot',`Matched → ${i.resolved_item_code} (${i.resolved_description}).`,{cands:r.candidates}); }
-      const miss=(r.missing||[]).filter(m=>m!=='item'||!r.confident_item);
-      const ask=miss.filter(m=>!d[m]||(m==='item'&&!d.item_code));
-      if(ask.length) push('bot','I still need: '+ask.map(a=>({quantity:'quantity',plant:'plant (PUN1/CHK1)',need_by_date:'need-by date',item:'the item'})[a]||a).join(', ')+'. You can type it, e.g. "qty 150, Pune, by 2026-12-01".');
-      else push('bot','Looks complete — review on the right and create the PR.');
-    }catch(e){push('bot','Error: '+e)}
-  }
-  function pick(c){ setDraft(d=>({...d,item_code:c.item_code,description:c.description})); push('bot',`Using ${c.item_code} (${c.description}).`); }
-  async function create(){
-    try{ const r=await jpost('/prs',{...draft,actor:role.toLowerCase()}); flash('PR created: '+r.pr.pr_no); push('bot',`✓ Created ${r.pr.pr_no}. Add it to a batch in the Buyer workspace (source = stored PRs).`); setDraft(null);}catch(e){flash('Error: '+e)}
-  }
-  const ready=draft&&draft.quantity&&draft.plant&&draft.need_by_date&&(draft.item_code||draft.description);
-  return html`<div class="grid md:grid-cols-3 gap-4">
-    <div class="card p-4 md:col-span-2 flex flex-col" style=${{height:'70vh'}}>
-      <div class="flex-1 overflow-auto pr-1">
-        ${msgs.map((m,i)=>html`<div key=${i} class=${'mb-3 flex '+(m.who==='me'?'justify-end':'justify-start')}>
-          <div class=${'px-3 py-2 rounded-xl max-w-[80%] '+(m.who==='me'?'bg-blue-600 text-white':'bg-slate-800')}>
-            <div class="text-sm whitespace-pre-wrap">${m.text}</div>
-            ${m.cands&&html`<div class="mt-2 flex flex-col gap-1">${m.cands.map(c=>html`<button key=${c.item_code} class="btn btn-g text-left text-xs" onClick=${()=>pick(c)}>${c.item_code} · ${c.description} <span class="text-slate-500">(${c.score})</span></button>`)}</div>`}
-          </div></div>`)}
-        <div ref=${end}></div>
-      </div>
-      <div class="flex gap-2 mt-3">
-        <input class="in" placeholder="Type a request…" value=${text} onChange=${e=>setText(e.target.value)} onKeyDown=${e=>e.key==='Enter'&&send()}/>
-        <button class="btn btn-p" onClick=${send}>Send</button>
-      </div>
-    </div>
-    <div class="card p-4">
-      <div class="font-semibold mb-2">PR draft</div>
-      ${!draft&&html`<div class="text-sm text-slate-400">Nothing yet. Chat to build a PR.</div>`}
-      ${draft&&html`<div class="text-sm space-y-2">
-        ${[['Item',draft.item_code?`${draft.item_code}`:`NEW · ${draft.description||'?'}`],['Description',draft.description],['Quantity',draft.quantity],['Plant',draft.plant],['Need-by',draft.need_by_date],['Urgency',draft.urgency||'Normal']].map(([k,v])=>html`<div key=${k} class="flex justify-between gap-3"><span class="text-slate-400">${k}</span><span class="text-right">${v||'—'}</span></div>`)}
-        <input class="in mt-2" placeholder="est. unit price (for NEW items)" onChange=${e=>setDraft(d=>({...d,estimated_unit_price:e.target.value}))}/>
-        <button class=${'btn w-full mt-2 '+(ready?'btn-p':'btn-g')} disabled=${!ready} onClick=${create}>Create PR</button>
-        <div class="text-[11px] text-slate-500">The assistant never invents an item code — unmatched text becomes a NEW item for sourcing.</div>
-      </div>`}
-    </div>
-  </div>`;
-}
-
-/* ---------------- Buyer workspace ---------------- */
-function Buyer({role,flash}){
-  const [reqs,setReqs]=useState([]); const [busy,setBusy]=useState(false); const [filter,setFilter]=useState(''); const [sel,setSel]=useState(null);
-  const load=()=>api('/requirements').then(setReqs);
-  useEffect(()=>{load()},[]);
-  async function run(source,file){
-    setBusy(true);
-    try{ const fd=new FormData(); if(file)fd.append('file',file); else fd.append('source',source); fd.append('label',source==='sample'?'sample':'run');
-      const r=await fetch('/api/process-batch',{method:'POST',body:fd}); const j=await r.json(); if(!r.ok)throw (j.detail||j);
-      flash(`Processed ${j.count} lines under v${j.policy_version}`); load();
-    }catch(e){flash('Error: '+e)} setBusy(false);
-  }
-  async function approve(g){ try{await jpost(`/requirements/${g}/approve`,{actor:role.toLowerCase()}); flash('Approved '+g); load();}catch(e){flash('Error: '+e)} }
-  const shown=reqs.filter(r=>!filter||r.route===filter);
-  const routes=[...new Set(reqs.map(r=>r.route))];
-  const stat=routes.map(rt=>[rt,reqs.filter(r=>r.route===rt).length]);
-  return html`<div class="space-y-4">
-    <div class="card p-4 flex flex-wrap items-center gap-2">
-      <button class="btn btn-p" disabled=${busy} onClick=${()=>run('sample')}>${busy?'…':'Process sample batch'}</button>
-      <button class="btn btn-g" disabled=${busy} onClick=${()=>run('stored')}>Process stored PRs</button>
-      <label class="btn btn-g cursor-pointer">Upload CSV<input type="file" accept=".csv" class="hidden" onChange=${e=>e.target.files[0]&&run('upload',e.target.files[0])}/></label>
-      <div class="flex-1"></div>
-      <button class="btn btn-g" onClick=${()=>window.open('/api/export/decisions.csv')}>⬇ decisions.csv</button>
-      <button class="btn btn-g" onClick=${()=>{const d=prompt('Preferred list as of (YYYY-MM-DD)','2026-11-01');if(d)window.open('/api/export/preferred.csv?as_of='+d)}}>⬇ preferred.csv</button>
-    </div>
-    ${reqs.length>0&&html`<div class="flex flex-wrap gap-2">
-      <button class=${'btn '+(filter===''?'btn-p':'btn-g')} onClick=${()=>setFilter('')}>All ${reqs.length}</button>
-      ${stat.map(([rt,n])=>html`<button key=${rt} class=${'btn '+(filter===rt?'btn-p':'btn-g')} onClick=${()=>setFilter(rt)}><span style=${{color:ROUTE_COLOR[rt]}}>●</span> ${rt} ${n}</button>`)}
-    </div>`}
-    <div class="card p-0 overflow-auto" style=${{maxHeight:'62vh'}}>
-      ${reqs.length===0?html`<div class="p-6 text-slate-400 text-sm">No run yet. Process a batch to see requirements, decisions and the “why”.</div>`:html`
-      <table><thead><tr>${['Group','PO','Item','Plant','Qty','Value','Route','Supplier / suggestions','Status','Why'].map(h=>html`<th key=${h}>${h}</th>`)}</tr></thead>
-      <tbody>${shown.map(r=>html`<tr key=${r.group_id} class="hover:bg-slate-800/40">
-        <td class="font-mono text-xs">${r.group_id}${r.lines.length>1?html`<div class="text-[10px] text-slate-500">${r.lines.length} lines${r.is_emergency?' · 🚨':''}</div>`:(r.is_emergency?' 🚨':'')}</td>
-        <td class="font-mono text-xs">${r.po_id||'—'}</td>
-        <td>${r.resolved_item_code}<div class="text-[11px] text-slate-500 max-w-[180px] truncate">${r.item_description}</div></td>
-        <td>${r.plant}</td><td>${r.total_quantity}</td>
-        <td>${inr(r.value)}<div class="text-[10px] text-slate-500">${r.value_basis}</div></td>
-        <td><${Pill} color=${ROUTE_COLOR[r.route]}>${r.route}</${Pill}></td>
-        <td>${r.supplier_id?html`<span>${r.supplier_id} ${r.po_unit_price!=null?'· '+inr(Math.round(r.po_unit_price)):''}</span>`:html`<span class="text-slate-400 text-xs">${(r.suggested_supplier_ids||[]).join(' · ')||'—'}</span>`}</td>
-        <td>${r.status==='pending'?html`<div class="flex gap-1"><button class="btn btn-p text-xs" onClick=${()=>approve(r.group_id)}>Approve</button><button class="btn btn-g text-xs" onClick=${()=>setSel(r)}>Override</button></div>`:html`<${Pill} color=${r.status==='approved'?'#22c55e':'#f59e0b'}>${r.status}</${Pill}>`}</td>
-        <td><button class="btn btn-g text-xs" onClick=${()=>setSel(r)}>view</button></td>
-      </tr>`)}</tbody></table>`}
-    </div>
-    ${sel&&html`<${ReqModal} r=${sel} role=${role} onClose=${()=>setSel(null)} onChanged=${()=>{setSel(null);load()}} flash=${flash}/>`}
-  </div>`;
-}
-
-function ReqModal({r,role,onClose,onChanged,flash}){
-  const [reason,setReason]=useState(''); const [field,setField]=useState('route'); const [value,setValue]=useState('');
-  async function save(){ if(!reason.trim())return flash('Override needs a reason'); try{await jpost(`/requirements/${r.group_id}/override`,{actor:role.toLowerCase(),field,value,reason}); flash('Override recorded'); onChanged();}catch(e){flash('Error: '+e)} }
-  return html`<div class="fixed inset-0 bg-black/60 flex items-center justify-center p-4 z-50" onClick=${onClose}>
-    <div class="card p-5 max-w-2xl w-full" onClick=${e=>e.stopPropagation()}>
-      <div class="flex justify-between items-start mb-3"><div><div class="font-bold">${r.group_id} · ${r.resolved_item_code}</div><div class="text-xs text-slate-400">${r.item_description}</div></div><button class="btn btn-g" onClick=${onClose}>✕</button></div>
-      <div class="grid grid-cols-2 gap-2 text-sm mb-3">
-        ${[['Decision',r.decision],['Route',r.route],['Value',inr(r.value)],['Supplier',r.supplier_id||'—'],['PO',r.po_id||'—'],['Policy',r.policy_version+' · '+r.clause]].map(([k,v])=>html`<div key=${k}><span class="text-slate-400">${k}:</span> ${v}</div>`)}
-      </div>
-      <div class="bg-slate-800/50 rounded-lg p-3 text-sm mb-3"><span class="text-slate-400">Why: </span>${r.reason}</div>
-      <div class="mb-3"><div class="text-xs text-slate-400 mb-1">PR lines (${r.lines.length})</div>
-        <div class="max-h-40 overflow-auto text-xs space-y-1">${r.lines.map((l,i)=>html`<div key=${i} class="flex justify-between gap-2 border-b border-slate-800 pb-1"><span>${l.pr_no}/${l.pr_line} · ${l.description}</span><span class="text-slate-400">${l.quantity} · by ${l.need_by_date} · ${l.urgency}</span></div>${l.match_note?html`<div class="text-[10px] text-slate-500">${l.match_note}</div>`:''}`)}</div>
-      </div>
-      <div class="border-t border-slate-700 pt-3">
-        <div class="text-sm font-semibold mb-1">Override (kept with the original decision)</div>
-        <div class="flex gap-2 mb-2">
-          <select class="in" style=${{width:'auto'}} value=${field} onChange=${e=>setField(e.target.value)}>${['route','supplier_id','decision'].map(f=>html`<option key=${f}>${f}</option>`)}</select>
-          <input class="in" placeholder="new value" value=${value} onChange=${e=>setValue(e.target.value)}/>
+    <div class="layout">
+      <aside class="rail">
+        <div>
+          <div class="nav-label">Workspace</div>
+          <nav class="nav">
+            ${tabs.map(([k, l, ic, count]) => html`<button key=${k}
+              class=${'nav-item' + (tab === k ? ' active' : '')} onClick=${() => setTab(k)}>
+              <${Icon} name=${ic} size=${15} />
+              <span>${l}</span>
+              ${count ? html`<span class="count">${count}</span>` : null}
+            </button>`)}
+          </nav>
         </div>
-        <input class="in mb-2" placeholder="reason (required)" value=${reason} onChange=${e=>setReason(e.target.value)}/>
-        <button class="btn btn-p" onClick=${save}>Save override</button>
-      </div>
-    </div></div>`;
+        ${meta && html`<div class="rail-card">
+          <h4>Dataset</h4>
+          ${[['Items', meta.counts.items], ['Suppliers', meta.counts.suppliers],
+             ['Contracts', meta.counts.contracts], ['PO history', meta.counts.po_history]].map(([k, v]) =>
+            html`<div class="rail-row" key=${k}><span>${k}</span><b>${num(v)}</b></div>`)}
+          <div class="rail-row" style=${{marginTop: '6px', borderTop: '1px solid var(--line)', paddingTop: '7px'}}>
+            <span>Plants</span><b>${(meta.plants || []).map(p => p.plant).join(' · ') || '—'}</b>
+          </div>
+        </div>`}
+      </aside>
+
+      <main class="main">
+        ${!ready && html`<div class="banner" style=${{marginBottom: '14px'}}>
+          <${Icon} name="bolt" size=${17} />
+          <div><b>No data or policy loaded.</b> Place the kit's <code class="code">data/</code> and
+          <code class="code">docs/policy-v5.json</code> next to the app, then restart — see
+          <code class="code">data/README.md</code> and <code class="code">docs/README.md</code>.
+          The UI runs, but batch processing and chat need the master data.</div>
+        </div>`}
+
+        ${tab === 'chat' && html`<${Chat} role=${role} flash=${flash} go=${setTab} />`}
+        ${tab === 'buyer' && html`<${Buyer} role=${role} flash=${flash} reqs=${reqs}
+            setReqs=${setReqs} meta=${meta} runInfo=${run} setRunInfo=${setRun} />`}
+        ${tab === 'policy' && html`<${PolicyTab} role=${role} flash=${flash} />`}
+        ${tab === 'contracts' && html`<${Contracts} role=${role} flash=${flash} />`}
+        ${tab === 'audit' && html`<${Audit} flash=${flash} />`}
+
+        ${toast && html`<div class="toast">${toast}</div>`}
+      </main>
+    </div>
+  </div>`;
 }
 
-/* ---------------- Policy tab ---------------- */
-function PolicyTab({role,flash}){
-  const [pols,setPols]=useState([]); const [text,setText]=useState(''); const [preview,setPreview]=useState(null); const [eff,setEff]=useState('2026-04-01');
-  const load=()=>api('/policies').then(setPols); useEffect(()=>{load()},[]);
-  async function propose(){ try{const r=await jpost('/policies/amendment',{text,effective_date:eff,actor:role.toLowerCase()}); setPreview(r); flash('Draft '+r.new_version+' created'); load();}catch(e){flash('Error: '+e)} }
-  async function approve(id){ try{const r=await jpost(`/policies/${id}/approve`,{actor:role.toLowerCase()}); flash('Activated v'+r.active_version); setPreview(null); load();}catch(e){flash('Error: '+e)} }
-  const examples=['Raise the Spot PO limit to 3,00,000','For plant CHK1, emergencies up to 1,00,000 should skip quotes','Change the clubbing create window to 10 days'];
-  return html`<div class="grid md:grid-cols-2 gap-4">
-    <div class="card p-4">
-      <div class="font-semibold mb-1">Upload / describe an amendment</div>
-      <div class="text-xs text-slate-400 mb-2">Procurement describes the change in plain English (or pastes amendment text). The app parses it, shows what changes, and activates a new version on approval — <b>no code change</b>.</div>
-      <textarea class="in" rows="4" placeholder="Describe the policy change…" value=${text} onChange=${e=>setText(e.target.value)}></textarea>
-      <div class="flex flex-wrap gap-1 my-2">${examples.map(x=>html`<button key=${x} class="btn btn-g text-[11px]" onClick=${()=>setText(x)}>${x}</button>`)}</div>
-      <div class="flex gap-2 items-center mb-2"><span class="text-xs text-slate-400">Effective</span><input class="in" style=${{width:'auto'}} value=${eff} onChange=${e=>setEff(e.target.value)}/>
-        <button class="btn btn-p" onClick=${propose} disabled=${role!=='Procurement'}>Preview changes</button></div>
-      ${role!=='Procurement'&&html`<div class="text-[11px] text-amber-400">Switch role to Procurement to amend policy.</div>`}
-      ${preview&&html`<div class="bg-slate-800/50 rounded-lg p-3 mt-2">
-        <div class="text-sm font-semibold mb-1">Draft v${preview.new_version} · eff ${preview.effective_date} ${preview.used_llm?'· (AI-parsed)':''}</div>
-        <ul class="text-sm list-disc ml-5 space-y-1">${preview.changes.map((c,i)=>html`<li key=${i} dangerouslySetInnerHTML=${{__html:c.replace(/\*\*(.+?)\*\*/g,'<b>$1</b>').replace(/\`(.+?)\`/g,'<code class=\'text-sky-300\'>$1</code>')}}></li>`)}</ul>
-        <button class="btn btn-p mt-3" onClick=${()=>approve(preview.draft_id)}>Approve & activate</button>
+/* ------------------------------------------------------------------ chat */
+const EXAMPLES = [
+  'need 200 nitrile gloves for Chakan by next Friday',
+  'urgent 4 hyd hose 1/2 inch 2 wire for Pune by 2026-12-01',
+  '1 eot crane 5 ton for Chakan by 2026-12-15',
+];
+
+function Chat({role, flash, go}) {
+  const [msgs, setMsgs] = useState([{
+    who: 'bot',
+    text: "Hi! Describe what you need in your own words — I'll match the item, ask only for what's missing, and raise the PR.",
+  }]);
+  const [text, setText] = useState('');
+  const [draft, setDraft] = useState(null);
+  const [busy, setBusy] = useState(false);
+  const end = useRef();
+  useEffect(() => { if (end.current) end.current.scrollIntoView({behavior: 'smooth'}); }, [msgs, busy]);
+  const push = (who, text, extra) => setMsgs(m => [...m, {who, text, ...extra}]);
+
+  async function send(raw) {
+    const t = (raw != null ? raw : text).trim();
+    if (!t || busy) return;
+    setText(''); push('me', t); setBusy(true);
+    try {
+      const r = await jpost('/chat/parse', {text: t});
+      const i = r.interpretation;
+      const incoming = {item_code: i.resolved_item_code, description: i.resolved_description || i.item_phrase,
+        quantity: i.quantity, plant: i.plant, need_by_date: i.need_by_date, urgency: i.urgency};
+      const d = {...(draft || {})};
+      Object.entries(incoming).forEach(([k, v]) => { if (v != null && v !== '') d[k] = v; });
+      setDraft(d);
+
+      if (r.ambiguous && r.candidates && r.candidates.length) {
+        push('bot', `That could be a few items — which one?`, {cands: r.candidates});
+      } else if (r.is_new_candidate && !r.confident_item) {
+        push('bot', `I couldn't match "${i.item_phrase}" in the item master, so this is a NEW item (it will go to sourcing). Pick a candidate or confirm the description.`, {cands: r.candidates});
+      } else if (r.confident_item) {
+        push('bot', `Matched to ${i.resolved_item_code} — ${i.resolved_description}.`, {cands: r.candidates});
+      }
+
+      const labels = {quantity: 'quantity', plant: 'plant (PUN1 / CHK1)', need_by_date: 'need-by date', item: 'the item'};
+      const missing = (r.missing || []).filter(m => {
+        if (m === 'item') return !d.item_code;
+        return !d[m];
+      });
+      if (missing.length) {
+        push('bot', 'Still needed: ' + missing.map(m => labels[m] || m).join(', ') + '.');
+      } else {
+        push('bot', 'All set — check the draft and create the PR.');
+      }
+    } catch (e) { push('bot', 'Sorry, that failed: ' + e); }
+    setBusy(false);
+  }
+  function pick(c) {
+    setDraft(d => ({...d, item_code: c.item_code, description: c.description}));
+    push('bot', `Using ${c.item_code} — ${c.description}.`);
+  }
+  async function create() {
+    setBusy(true);
+    try {
+      const r = await jpost('/prs', {...draft, actor: role.toLowerCase()});
+      flash('PR created: ' + r.pr.pr_no);
+      push('bot', `Created ${r.pr.pr_no}. It can now be processed in the buyer workspace.`);
+      setDraft(null);
+    } catch (e) { flash('Error: ' + e); }
+    setBusy(false);
+  }
+
+  const ready = draft && draft.quantity && draft.plant && draft.need_by_date && (draft.item_code || draft.description);
+  const slot = (k, label, value, ok) => html`<div class="slot">
+    <span class="k"><span class=${'tick' + (ok ? ' on' : '')}>✓</span>${label}</span>
+    <span style=${{textAlign: 'right', color: ok ? '#e4ecf9' : 'var(--dim)'}}>${value || '—'}</span>
+  </div>`;
+
+  return html`<div>
+    <div class="page-head">
+      <div>
+        <h1 class="page-title">Raise a purchase request</h1>
+        <div class="page-sub">Chat instead of forms — the assistant resolves the item and never invents one.</div>
+      </div>
+      <div class="tiny muted">Signed as ${role}</div>
+    </div>
+
+    <div class="chat-grid">
+      <div class="card chat-card">
+        <div class="chat-log">
+          ${msgs.map((m, i) => html`<div key=${i} class=${'msg ' + (m.who === 'me' ? 'me' : '')}>
+            <div class=${'avatar ' + (m.who === 'me' ? 'me' : 'bot')}>${m.who === 'me' ? 'ME' : 'AI'}</div>
+            <div>
+              <div class="bubble">${m.text}</div>
+              ${m.cands && m.cands.length ? html`<div style=${{marginTop: '7px', display: 'flex', flexDirection: 'column', gap: '5px'}}>
+                ${m.cands.map(c => html`<button key=${c.item_code} class="btn ghost sm" style=${{justifyContent: 'flex-start', textAlign: 'left'}}
+                    onClick=${() => pick(c)}>
+                  <span class="mono">${c.item_code}</span>
+                  <span style=${{color: '#c3d2e8', fontWeight: 500}}>${short(c.description, 42)}</span>
+                  <span class="dim mono" style=${{marginLeft: 'auto'}}>${c.score}</span>
+                </button>`)}
+              </div>` : null}
+            </div>
+          </div>`)}
+          ${busy && html`<div class="msg"><div class="avatar bot">AI</div><div class="bubble dim">…</div></div>`}
+          <div ref=${end}></div>
+        </div>
+
+        ${msgs.length <= 1 && html`<div class="suggest">
+          ${EXAMPLES.map(x => html`<button key=${x} onClick=${() => send(x)}>${x}</button>`)}
+        </div>`}
+
+        <div class="composer">
+          <input class="input" placeholder="e.g. 200 nitrile gloves for Chakan by next Friday"
+            value=${text} onChange=${e => setText(e.target.value)}
+            onKeyDown=${e => e.key === 'Enter' && send()} />
+          <button class="btn primary" disabled=${busy || !text.trim()} onClick=${() => send()}>
+            <${Icon} name="arrow" size=${14} /> Send
+          </button>
+        </div>
+      </div>
+
+      <div class="card pad" style=${{display: 'flex', flexDirection: 'column'}}>
+        <div class="row" style=${{marginBottom: '6px'}}>
+          <div class="card-title">PR draft</div>
+          <div class="spacer"></div>
+          ${draft && html`<button class="btn ghost sm" onClick=${() => setDraft(null)}>Reset</button>`}
+        </div>
+        <div class="card-sub" style=${{marginBottom: '10px'}}>Filled from the conversation.</div>
+
+        ${!draft && html`<${Empty} title="Nothing yet">Type a request on the left and the fields fill in here.<//>`}
+
+        ${draft && html`<div style=${{display: 'flex', flexDirection: 'column', flex: 1}}>
+          <div>
+            ${slot('item', 'Item', draft.item_code || (draft.description ? 'NEW · ' + draft.description : ''), !!draft.item_code)}
+            ${slot('qty', 'Quantity', draft.quantity, !!draft.quantity)}
+            ${slot('plant', 'Plant', draft.plant, !!draft.plant)}
+            ${slot('need', 'Need by', draft.need_by_date, !!draft.need_by_date)}
+            ${slot('urgency', 'Urgency', draft.urgency || 'Normal', !!draft.urgency)}
+          </div>
+
+          ${!draft.item_code && html`<div style=${{marginTop: '10px'}}>
+            <div class="field">
+              <label>Estimated unit price (new item)</label>
+              <input class="input" inputmode="decimal" placeholder="e.g. 450"
+                value=${draft.estimated_unit_price || ''}
+                onChange=${e => setDraft(d => ({...d, estimated_unit_price: e.target.value}))} />
+            </div>
+          </div>`}
+
+          <div class="spacer"></div>
+          <button class=${'btn ' + (ready ? 'primary' : 'ghost')} disabled=${!ready || busy}
+            style=${{width: '100%', marginTop: '14px'}} onClick=${create}>
+            <${Icon} name="check" size=${14} /> Create PR
+          </button>
+          <div class="hint" style=${{marginTop: '8px'}}>
+            Unmatched text becomes a NEW item for sourcing — the assistant never fabricates an item code.
+          </div>
+          <button class="btn ghost sm" style=${{marginTop: '10px'}} onClick=${() => go('buyer')}>
+            Go to buyer workspace <${Icon} name="arrow" size=${13} />
+          </button>
+        </div>`}
+      </div>
+    </div>
+  </div>`;
+}
+
+/* ------------------------------------------------------------------ buyer */
+function Buyer({role, flash, reqs, setReqs, meta, runInfo, setRunInfo}) {
+  const [busy, setBusy] = useState(false);
+  const [route, setRoute] = useState('');
+  const [q, setQ] = useState('');
+  const [sel, setSel] = useState(null);
+  const [prefDate, setPrefDate] = useState('2026-11-01');
+
+  async function run(source, file, asOf) {
+    setBusy(true);
+    try {
+      const fd = new FormData();
+      if (file) fd.append('file', file); else fd.append('source', source);
+      fd.append('label', source === 'sample' ? 'sample' : 'run');
+      if (asOf) fd.append('as_of', asOf);
+      const r = await fetch('/api/process-batch', {method: 'POST', body: fd});
+      const j = await r.json();
+      if (!r.ok) throw (j.detail || j);
+      setReqs(j.requirements || []);
+      setRunInfo({label: j.label, policy_version: j.policy_version, count: j.count, at: new Date().toLocaleTimeString()});
+      flash(`Processed ${j.count} lines under policy v${j.policy_version}`);
+    } catch (e) { flash('Error: ' + e); }
+    setBusy(false);
+  }
+  const pos = reqs.filter(r => r.decision === 'PO');
+  const sourcing = reqs.filter(r => r.decision !== 'PO');
+  const poValue = pos.reduce((a, r) => a + (r.value || 0), 0);
+  const srcValue = sourcing.reduce((a, r) => a + (r.value || 0), 0);
+  const lines = reqs.reduce((a, r) => a + (r.lines ? r.lines.length : 0), 0);
+
+  const routeCounts = {};
+  reqs.forEach(r => { routeCounts[r.route] = (routeCounts[r.route] || 0) + 1; });
+
+  const needle = q.toLowerCase().trim();
+  const shown = reqs.filter(r => {
+    if (route && r.route !== route) return false;
+    if (!needle) return true;
+    const hay = [r.group_id, r.po_id, r.resolved_item_code, r.item_description, r.supplier_id,
+      (r.suggested_supplier_ids || []).join(' '), ...(r.lines || []).map(l => l.pr_no + ' ' + l.description)].join(' ').toLowerCase();
+    return hay.includes(needle);
+  });
+
+  return html`<div class="stack">
+    <div class="page-head">
+      <div>
+        <h1 class="page-title">Buyer workspace</h1>
+        <div class="page-sub">
+          ${runInfo
+            ? `Last run ${runInfo.label} · ${runInfo.count} lines · policy v${runInfo.policy_version} · ${runInfo.at}`
+            : 'Process a batch to see requirements, decisions and the reason behind each one.'}
+        </div>
+      </div>
+      <div class="row">
+        <input class="input compact" style=${{width: '128px'}} value=${prefDate}
+          onChange=${e => setPrefDate(e.target.value)} title="Preferred list as of (YYYY-MM-DD)" />
+        <button class="btn ghost" onClick=${() => window.open('/api/export/preferred.csv?as_of=' + prefDate)}>
+          <${Icon} name="down" size=${14} /> preferred.csv
+        </button>
+        <button class="btn primary" onClick=${() => window.open('/api/export/decisions.csv')} disabled=${!reqs.length}>
+          <${Icon} name="down" size=${14} /> decisions.csv
+        </button>
+      </div>
+    </div>
+
+    <div style=${{display: 'grid', gridTemplateColumns: 'repeat(auto-fit,minmax(155px,1fr))', gap: '10px'}}>
+      ${[
+        ['Requirements', num(reqs.length), lines + ' PR lines', '#4f8cff'],
+        ['PO-bound', num(pos.length), inr(poValue) + ' committed', '#22c55e'],
+        ['Sourcing', num(sourcing.length), inr(srcValue) + ' to source', '#a78bfa'],
+        ['POs', num(new Set(pos.map(r => r.po_id).filter(Boolean)).size), 'after consolidation (§7)', '#38bdf8'],
+        ['Needs review', num(reqs.filter(r => r.status === 'pending').length), 'pending approval', '#f5a524'],
+      ].map(([k, v, s, c]) => html`<div class="tile" key=${k} style=${{'--tilec': c}}>
+        <div class="k">${k}</div><div class="v">${v}</div><div class="s">${s}</div>
+      </div>`)}
+    </div>
+
+    <div class="card pad">
+      <div class="row">
+        <button class="btn primary" disabled=${busy} onClick=${() => run('sample')}>
+          <${Icon} name="bolt" size=${14} /> ${busy ? 'Processing…' : 'Process sample batch'}
+        </button>
+        <button class="btn ghost" disabled=${busy} onClick=${() => run('stored')}>Process stored PRs</button>
+        <label class="btn ghost" style=${{cursor: 'pointer'}}>
+          <${Icon} name="up" size=${14} /> Upload batch CSV
+          <input type="file" accept=".csv" style=${{display: 'none'}}
+            onChange=${e => e.target.files[0] && run('upload', e.target.files[0])} />
+        </label>
+        <div class="spacer"></div>
+        <div class="row" style=${{gap: '6px'}}>
+          <div style=${{position: 'relative'}}>
+            <span style=${{position: 'absolute', left: '8px', top: '50%', transform: 'translateY(-50%)', color: 'var(--dim)'}}>
+              <${Icon} name="search" size=${13} /></span>
+            <input class="input compact" style=${{paddingLeft: '27px', width: '220px'}} placeholder="Search item, PR, supplier…"
+              value=${q} onChange=${e => setQ(e.target.value)} />
+          </div>
+        </div>
+      </div>
+
+      ${reqs.length > 0 && html`<div class="row" style=${{marginTop: '12px'}}>
+        <button class=${'btn sm ' + (!route ? 'primary' : 'ghost')} onClick=${() => setRoute('')}>All · ${reqs.length}</button>
+        ${Object.entries(routeCounts).sort((a, b) => b[1] - a[1]).map(([rt, n]) => html`
+          <button key=${rt} class=${'btn sm ' + (route === rt ? 'primary' : 'ghost')} onClick=${() => setRoute(rt)}>
+            <span style=${{width: '6px', height: '6px', borderRadius: '50%', background: (ROUTES[rt] || {}).c || '#94a3b8', display: 'inline-block'}}></span>
+            ${(ROUTES[rt] || {}).label || rt} · ${n}
+          </button>`)}
       </div>`}
     </div>
-    <div class="card p-4">
-      <div class="font-semibold mb-2">Version history</div>
-      <table><thead><tr>${['Ver','Effective','Status','Summary'].map(h=>html`<th key=${h}>${h}</th>`)}</tr></thead>
-      <tbody>${pols.map(p=>html`<tr key=${p.id}><td class="font-mono">${p.version}</td><td>${p.effective_date}</td>
-        <td><${Pill} color=${p.status==='active'?'#22c55e':p.status==='draft'?'#eab308':'#64748b'}>${p.status}</${Pill}></td>
-        <td class="text-xs text-slate-400">${p.summary||''} ${p.status==='draft'?html`<button class="btn btn-p text-[11px] ml-1" onClick=${()=>approve(p.id)}>activate</button>`:''}</td></tr>`)}</tbody></table>
+
+    <div class="card scroll" style=${{maxHeight: 'calc(100vh - 360px)', minHeight: '260px'}}>
+      ${!reqs.length
+        ? html`<${Empty} title="No decisions yet">
+            Process the sample batch (186 lines from the kit) or upload your own CSV. Every decision records
+            the policy clause it came from.<//>`
+        : !shown.length
+        ? html`<${Empty} title="Nothing matches that filter">Clear the search or pick another route.<//>`
+        : html`<table>
+          <thead><tr>
+            ${['Group', 'Item', 'Plant', 'Qty', 'Value', 'Route', 'Outcome', 'Status', ''].map(h => html`<th key=${h}>${h}</th>`)}
+          </tr></thead>
+          <tbody>
+            ${shown.map(r => html`<tr key=${r.group_id} class="click" onClick=${() => setSel(r)}>
+              <td>
+                <div class="mono" style=${{color: '#cfdcf3'}}>${r.group_id}</div>
+                <div class="tiny dim">${r.lines.length > 1 ? r.lines.length + ' lines' : '1 line'}${r.is_emergency ? ' · emergency' : ''}</div>
+              </td>
+              <td>
+                <div class="mono" style=${{fontSize: '12px'}}>${r.resolved_item_code}</div>
+                <div class="tiny dim" style=${{maxWidth: '210px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap'}}>
+                  ${r.item_description}</div>
+              </td>
+              <td>${r.plant}</td>
+              <td class="num">${num(r.total_quantity)}</td>
+              <td class="num">
+                <div>${inr(r.value)}</div>
+                <div class="tiny dim">${r.value_basis || ''}</div>
+              </td>
+              <td><${RoutePill} route=${r.route} /></td>
+              <td>
+                ${r.supplier_id
+                  ? html`<div class="mono small">${r.supplier_id}${r.po_unit_price != null ? ' · ' + inr(Math.round(r.po_unit_price)) : ''}</div>
+                         <div class="tiny dim">${r.po_id || 'PO pending'}</div>`
+                  : html`<div class="tiny" style=${{color: '#b9c8de'}}>${(r.suggested_supplier_ids || []).join(' · ') || '—'}</div>
+                         <div class="tiny dim">ranked suggestions</div>`}
+              </td>
+              <td><${StatusPill} status=${r.status} /></td>
+              <td class="dim"><${Icon} name="arrow" size=${14} /></td>
+            </tr>`)}
+          </tbody>
+        </table>`}
+    </div>
+
+    ${sel && html`<${ReqDrawer} r=${sel} role=${role} flash=${flash}
+      onClose=${() => setSel(null)}
+      onChanged=${updated => {
+        setReqs(rs => rs.map(x => x.group_id === updated.group_id ? updated : x));
+        setSel(updated);
+      }} />`}
+  </div>`;
+}
+
+/* ------------------------------------------------------------------ drawer */
+function ReqDrawer({r, role, flash, onClose, onChanged}) {
+  const [pref, setPref] = useState(null);
+  const [prefErr, setPrefErr] = useState(null);
+  const [showOverride, setShowOverride] = useState(false);
+  const [field, setField] = useState('route');
+  const [value, setValue] = useState('');
+  const [reason, setReason] = useState('');
+  const [busy, setBusy] = useState(false);
+
+  useEffect(() => {
+    if (!r.resolved_item_code || r.resolved_item_code === 'NEW') return;
+    api(`/items/${encodeURIComponent(r.resolved_item_code)}/preferred?as_of=${r.requirement_date}`)
+      .then(setPref).catch(e => setPrefErr('' + e));
+  }, [r.group_id]);
+  useEffect(() => {
+    const onKey = e => { if (e.key === 'Escape') onClose(); };
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
+  }, []);
+
+  async function approve() {
+    setBusy(true);
+    try {
+      const out = await jpost(`/requirements/${r.group_id}/approve`, {actor: role.toLowerCase()});
+      flash('Approved ' + r.group_id);
+      onChanged(out.requirement);
+    } catch (e) { flash('Error: ' + e); }
+    setBusy(false);
+  }
+  async function saveOverride() {
+    if (!reason.trim()) return flash('An override needs a written reason (§8.1)');
+    setBusy(true);
+    try {
+      const out = await jpost(`/requirements/${r.group_id}/override`,
+        {actor: role.toLowerCase(), field, value, reason});
+      flash('Override recorded');
+      setShowOverride(false);
+      onChanged(out.requirement);
+    } catch (e) { flash('Error: ' + e); }
+    setBusy(false);
+  }
+  const canAct = role !== 'Requester';
+
+  return html`<div class="overlay right" onClick=${onClose}>
+    <div class="drawer" onClick=${e => e.stopPropagation()}>
+      <div class="card-head" style=${{background: '#0b1322'}}>
+        <div>
+          <div class="row" style=${{gap: '8px'}}>
+            <span class="mono" style=${{fontWeight: 700}}>${r.group_id}</span>
+            <${RoutePill} route=${r.route} />
+            <${StatusPill} status=${r.status} />
+          </div>
+          <div class="tiny dim" style=${{marginTop: '4px'}}>
+            ${r.resolved_item_code} · ${r.item_description} · ${r.plant}
+          </div>
+        </div>
+        <button class="btn ghost sm" onClick=${onClose}><${Icon} name="x" size=${14} /></button>
+      </div>
+
+      <div class="drawer-body stack">
+        <div class="kv">
+          ${[
+            ['Decision', r.decision],
+            ['Value', inr(r.value)],
+            ['Unit price', r.po_unit_price != null ? inr(Math.round(r.po_unit_price)) : (r.unit_price != null ? inr(Math.round(r.unit_price)) : '—')],
+            ['Supplier', r.supplier_id || '—'],
+            ['PO', r.po_id || 'not yet raised'],
+            ['Policy', 'v' + r.policy_version + ' · clause ' + r.clause],
+          ].map(([k, v]) => html`<div class="item" key=${k}>
+            <div class="k">${k}</div><div class="v">${v}</div>
+          </div>`)}
+        </div>
+
+        <div>
+          <div class="card-sub" style=${{marginBottom: '6px', fontWeight: 600}}>Why this decision</div>
+          <div class="why"><${Rich} text=${r.reason || ''} /></div>
+          ${r.value_basis ? html`<div class="hint" style=${{marginTop: '6px'}}>Value basis: ${r.value_basis}</div>` : null}
+        </div>
+
+        <div>
+          <div class="card-sub" style=${{marginBottom: '6px', fontWeight: 600}}>
+            PR lines (${r.lines.length})
+            <span class="dim" style=${{fontWeight: 400}}> · requirement date ${r.requirement_date}</span>
+          </div>
+          <div class="card" style=${{overflow: 'hidden'}}>
+            <table>
+              <thead><tr><th>PR line</th><th>Description</th><th class="num">Qty</th><th>Need by</th><th>Urgency</th></tr></thead>
+              <tbody>${r.lines.map((l, i) => html`<tr key=${i}>
+                <td class="mono tiny">${l.pr_no}/${l.pr_line}</td>
+                <td class="tiny">${l.description}${l.match_note ? html`<div class="dim">${l.match_note}</div>` : null}</td>
+                <td class="num">${num(l.quantity)}</td>
+                <td class="tiny">${l.need_by_date}</td>
+                <td class="tiny">${l.urgency}</td>
+              </tr>`)}</tbody>
+            </table>
+          </div>
+        </div>
+
+        ${r.resolved_item_code !== 'NEW' && html`<div>
+          <div class="card-sub" style=${{marginBottom: '6px', fontWeight: 600}}>
+            Preferred suppliers
+            <span class="dim" style=${{fontWeight: 400}}> · as of ${r.requirement_date} · policy §6</span>
+          </div>
+          ${prefErr ? html`<div class="hint">Ranking unavailable: ${prefErr}</div>`
+            : !pref ? html`<div class="hint">Loading ranking…</div>`
+            : html`<div>
+                <div class="card pad">
+                  ${pref.ranked.length
+                    ? pref.ranked.map((s, i) => html`<div key=${s.supplier_id} class=${'rank-row' + (i === 0 ? ' first' : '')}>
+                        <div class="rank-no">${s.rank}</div>
+                        <div>
+                          <div class="row" style=${{gap: '7px'}}>
+                            <span class="mono small" style=${{color: '#dbe7f9'}}>${s.supplier_id}</span>
+                            <span class="small">${s.name}</span>
+                            ${s.has_contract ? html`<${Pill} color="#a78bfa">contract<//>` : null}
+                            ${s.supplier_id === r.supplier_id ? html`<${Pill} color="#22c55e">used on this decision<//>` : null}
+                          </div>
+                          <div class="tiny dim" style=${{marginTop: '2px'}}>
+                            ${s.po_count} PO${s.po_count === 1 ? '' : 's'} in 548d ·
+                            last ${s.last_po_date || '—'} · on-time ${pct(s.on_time_pct)} · quality ${s.quality_rating}/5
+                          </div>
+                          <div class="meter" title="frequency · recency · contract · on-time · quality">
+                            ${['frequency', 'recency', 'contract', 'on_time', 'quality'].map(k =>
+                              html`<i key=${k}><b style=${{width: ((s.components[k] || 0) * 100).toFixed(0) + '%'}}></b></i>`)}
+                          </div>
+                        </div>
+                        <div style=${{textAlign: 'right', minWidth: '86px'}}>
+                          <div class="mono" style=${{fontSize: '12px'}}>${s.reference_price != null ? inr(Math.round(s.reference_price)) : '—'}</div>
+                          <div class="tiny dim">score ${s.score.toFixed(2)}</div>
+                        </div>
+                      </div>`)
+                    : html`<div class="hint">No Active supplier qualifies for this item yet.</div>`}
+                </div>
+                <div class="hint" style=${{marginTop: '6px'}}>
+                  Ranking is data-driven (§6.2 weights live in the policy): frequency 30%, recency 25%,
+                  contract 20%, on-time 15%, quality 10%.
+                  ${r.supplier_id && pref.ranked.length && !pref.ranked.some(s => s.supplier_id === r.supplier_id)
+                    ? ` Supplier ${r.supplier_id} was used under §5.2 (rate contract) rather than the preferred list.` : ''}
+                </div>
+              </div>`}
+        </div>`}
+
+        ${r.override && html`<div class="banner" style=${{borderColor: 'rgba(167,139,250,.35)', background: 'rgba(167,139,250,.08)', color: '#e0d7ff'}}>
+          <${Icon} name="clock" size=${16} />
+          <div><b>Overridden</b> by ${r.override.by} — ${r.override.field}: ${String(r.override.from)} → ${r.override.to}<br/>
+          Reason: ${r.override.reason}</div>
+        </div>`}
+      </div>
+
+      <div class="drawer-foot">
+        ${showOverride ? html`<div>
+          <div class="row" style=${{gap: '6px', marginBottom: '8px'}}>
+            <select class="input compact" value=${field} onChange=${e => setField(e.target.value)}>
+              ${['route', 'supplier_id', 'decision'].map(f => html`<option key=${f}>${f}</option>`)}
+            </select>
+            <input class="input compact" style=${{flex: 1}} placeholder=${'new ' + field} value=${value}
+              onChange=${e => setValue(e.target.value)} />
+          </div>
+          <textarea class="input" rows="2" placeholder="Written reason (required — kept with the original decision)"
+            value=${reason} onChange=${e => setReason(e.target.value)}></textarea>
+          <div class="row" style=${{marginTop: '8px'}}>
+            <button class="btn primary" disabled=${busy || !reason.trim()} onClick=${saveOverride}>Save override</button>
+            <button class="btn ghost" onClick=${() => setShowOverride(false)}>Cancel</button>
+          </div>
+        </div>` : html`<div class="row">
+          <button class="btn ok" disabled=${busy || r.status === 'approved' || !canAct} onClick=${approve}>
+            <${Icon} name="check" size=${14} /> ${r.status === 'approved' ? 'Approved' : 'Approve & raise'}
+          </button>
+          <button class="btn ghost" disabled=${!canAct} onClick=${() => setShowOverride(true)}>Override…</button>
+          <div class="spacer"></div>
+          <span class="hint">${canAct ? 'Every action is logged with actor + time (§8.1)' : 'Switch role to Buyer to act'}</span>
+        </div>`}
+      </div>
     </div>
   </div>`;
 }
 
-/* ---------------- Contracts ---------------- */
-function Contracts({role,flash}){
-  const [cs,setCs]=useState([]); const [form,setForm]=useState(null);
-  const load=()=>api('/contracts').then(setCs); useEffect(()=>{load()},[]);
-  async function add(){ try{ const body={...form,value_cap:Number(form.value_cap),lines:form.lines.split('\n').map(x=>x.trim()).filter(Boolean).map(l=>{const[item_code,rate]=l.split(/[ ,]+/);return{item_code,rate:Number(rate)}}),actor:role.toLowerCase()};
-      await jpost('/contracts',body); flash('Contract added: '+body.contract_id); setForm(null); load();}catch(e){flash('Error: '+e)} }
-  return html`<div class="space-y-4">
-    <div class="flex items-center gap-2"><div class="font-semibold">Contracts (${cs.length})</div><div class="flex-1"></div>
-      <button class="btn btn-p" onClick=${()=>setForm({contract_id:'',supplier_id:'',supplier_name:'',start_date:'2026-11-15',end_date:'2027-11-14',value_cap:'',lines:''})}>+ Add PDF-only contract</button></div>
-    <div class="card p-0 overflow-auto" style=${{maxHeight:'65vh'}}>
-      <table><thead><tr>${['Contract','Supplier','Validity','Ceiling','Consumed','Source','Items'].map(h=>html`<th key=${h}>${h}</th>`)}</tr></thead>
-      <tbody>${cs.map(c=>html`<tr key=${c.contract_id}><td class="font-mono">${c.contract_id}</td><td>${c.supplier_id} ${c.supplier_name}</td>
-        <td class="text-xs">${c.start_date} → ${c.end_date}</td><td>${inr(c.value_cap)}</td><td>${inr(c.consumed_value)}</td>
-        <td><${Pill} color=${c.source==='pdf'?'#a78bfa':'#64748b'}>${c.source}</${Pill}></td>
-        <td class="text-xs text-slate-400">${c.items.map(i=>i.item_code+'@'+i.rate).join(', ')}</td></tr>`)}</tbody></table>
+/* ------------------------------------------------------------------ policy */
+const OPS_EXAMPLE = JSON.stringify([{
+  op: 'add_rule', before: '5.5', rule: {
+    id: 'amend-chk1-large-rfp', clause: 'amend-1', name: 'CHK1 large buys always RFP',
+    when: {all: [
+      {field: 'requirement.plant', op: 'eq', value: 'CHK1'},
+      {field: 'requirement.value', op: 'gt', value: 300000},
+    ]},
+    outcome: {decision: 'SOURCING_REQUEST', route: 'RFP', supplier_strategy: 'suggest_5'},
+  },
+}], null, 2);
+
+function PolicyTab({role, flash}) {
+  const [pols, setPols] = useState([]);
+  const [text, setText] = useState('');
+  const [eff, setEff] = useState('2026-04-01');
+  const [preview, setPreview] = useState(null);
+  const [busy, setBusy] = useState(false);
+  const [opsText, setOpsText] = useState(OPS_EXAMPLE);
+  const load = () => api('/policies').then(setPols).catch(e => flash('Error: ' + e));
+  useEffect(() => { load(); }, []);
+
+  const canAmend = role === 'Procurement';
+  const examples = [
+    'Raise the Spot PO limit to 3,00,000',
+    'Change the clubbing create window to 10 days',
+    'Raise the RFP threshold to 12,00,000',
+  ];
+
+  async function propose() {
+    if (!text.trim()) return flash('Describe the change first');
+    setBusy(true);
+    try {
+      const r = await jpost('/policies/amendment', {text, effective_date: eff, actor: role.toLowerCase()});
+      setPreview(r); load(); flash('Draft v' + r.new_version + ' created');
+    } catch (e) { flash('Error: ' + e); }
+    setBusy(false);
+  }
+  async function approve(id) {
+    setBusy(true);
+    try {
+      const r = await jpost(`/policies/${id}/approve`, {actor: role.toLowerCase()});
+      flash('Policy v' + r.active_version + ' is now active');
+      setPreview(null); load();
+    } catch (e) { flash('Error: ' + e); }
+    setBusy(false);
+  }
+  async function proposeOps() {
+    let ops;
+    try { ops = JSON.parse(opsText); } catch (e) { return flash('Ops must be valid JSON'); }
+    if (!Array.isArray(ops) || !ops.length) return flash('Ops must be a non-empty JSON array');
+    setBusy(true);
+    try {
+      const r = await jpost('/policies/amendment', {ops, effective_date: eff, actor: role.toLowerCase()});
+      setPreview(r); load(); flash('Draft v' + r.new_version + ' created');
+    } catch (e) { flash('Error: ' + e); }
+    setBusy(false);
+  }
+
+  return html`<div>
+    <div class="page-head">
+      <div>
+        <h1 class="page-title">Policy as data</h1>
+        <div class="page-sub">Limits, windows, rule order and outcomes live in a versioned document — an amendment is a new version, never a deploy.</div>
+      </div>
+      <${Pill} color=${canAmend ? '#22c55e' : '#f5a524'}>${canAmend ? 'Procurement — can amend' : 'Read-only for ' + role}<//>
     </div>
-    ${form&&html`<div class="fixed inset-0 bg-black/60 flex items-center justify-center p-4 z-50" onClick=${()=>setForm(null)}>
-      <div class="card p-5 max-w-lg w-full" onClick=${e=>e.stopPropagation()}>
-        <div class="font-bold mb-3">Add PDF-only contract (binding from start date, consumed = 0)</div>
-        ${[['contract_id','RC-2026-0xx'],['supplier_id','S0xx'],['supplier_name','Name'],['start_date','YYYY-MM-DD'],['end_date','YYYY-MM-DD'],['value_cap','e.g. 2000000']].map(([k,ph])=>html`<input key=${k} class="in mb-2" placeholder=${k+' · '+ph} value=${form[k]} onChange=${e=>setForm(f=>({...f,[k]:e.target.value}))}/>`)}
-        <textarea class="in mb-2" rows="3" placeholder=${'lines, one per row: ITM-1037 2439.01'} value=${form.lines} onChange=${e=>setForm(f=>({...f,lines:e.target.value}))}></textarea>
-        <button class="btn btn-p" onClick=${add}>Add contract</button>
-      </div></div>`}
+
+    <div style=${{display: 'grid', gridTemplateColumns: 'minmax(0,1.15fr) minmax(0,1fr)', gap: '14px'}}>
+      <div class="stack">
+        <div class="card pad">
+          <div class="card-title" style=${{marginBottom: '4px'}}>Describe an amendment</div>
+          <div class="card-sub" style=${{marginBottom: '10px'}}>
+            Paste the amendment text or describe it in plain English. It is parsed into ops over the policy document and shown as a draft.
+          </div>
+          <textarea class="input" rows="4" placeholder="e.g. For plant CHK1, emergencies up to 1,00,000 should skip quotes"
+            value=${text} onChange=${e => setText(e.target.value)}></textarea>
+          <div class="row" style=${{marginTop: '8px', gap: '6px'}}>
+            ${examples.map(x => html`<button key=${x} class="btn ghost sm" onClick=${() => setText(x)}>${short(x, 46)}</button>`)}
+          </div>
+          <div class="hint" style=${{marginTop: '6px'}}>
+            Plain English covers the common limit and window changes; a brand-new kind of rule goes in the
+            structured ops panel below.
+          </div>
+          <div class="row" style=${{marginTop: '12px'}}>
+            <div style=${{display: 'flex', alignItems: 'center', gap: '7px'}}>
+              <span class="hint">Effective</span>
+              <input class="input compact" style=${{width: '130px'}} value=${eff} onChange=${e => setEff(e.target.value)} />
+            </div>
+            <div class="spacer"></div>
+            <button class="btn primary" disabled=${busy || !canAmend} onClick=${propose}>Preview changes</button>
+          </div>
+          ${!canAmend && html`<div class="hint" style=${{marginTop: '8px'}}>Switch the role to Procurement to amend.</div>`}
+        </div>
+
+        <details class="card pad">
+          <summary style=${{cursor: 'pointer'}} class="card-title">Advanced — apply structured ops (no AI needed)</summary>
+          <div class="card-sub" style=${{marginTop: '6px'}}>
+            Any change to the document can be written as ops, including a rule kind that has never existed
+            before (the example inserts a plant-specific rule before §5.3). Same path an AI parse produces,
+            same preview and approval.
+          </div>
+          <textarea class="input mono" rows="12" style=${{marginTop: '9px', fontSize: '11px', lineHeight: 1.5}}
+            value=${opsText} onChange=${e => setOpsText(e.target.value)}></textarea>
+          <div class="row" style=${{marginTop: '9px'}}>
+            <button class="btn ghost" disabled=${busy || !canAmend} onClick=${proposeOps}>Preview these ops</button>
+            <span class="hint">Validated server-side. Nothing activates until you approve.</span>
+          </div>
+        </details>
+
+        ${preview && html`<div class="card">
+          <div class="card-head">
+            <div>
+              <div class="card-title">Draft v${preview.new_version} · effective ${preview.effective_date}</div>
+              <div class="card-sub">Not active until you approve it.${preview.used_llm ? ' AI-parsed amendment.' : ''}</div>
+            </div>
+            <${Pill} color="#f5a524">draft<//>
+          </div>
+          <div class="pad stack">
+            <div>
+              ${(preview.changes || []).map((c, i) => html`<div key=${i} style=${{display: 'flex', gap: '9px', padding: '7px 0', borderBottom: '1px solid rgba(29,41,64,.7)'}}>
+                <span style=${{color: '#7aa7ff', fontWeight: 700, fontSize: '11px', paddingTop: '2px'}}>${String(i + 1).padStart(2, '0')}</span>
+                <div class="small"><${Rich} text=${c} /></div>
+              </div>`)}
+            </div>
+            <details>
+              <summary class="hint" style=${{cursor: 'pointer'}}>Structured ops (what will be applied)</summary>
+              <pre class="code" style=${{whiteSpace: 'pre-wrap', display: 'block', marginTop: '7px', lineHeight: 1.5}}>${JSON.stringify(preview.ops, null, 2)}</pre>
+            </details>
+            <div class="row">
+              <button class="btn primary" disabled=${busy || !canAmend} onClick=${() => approve(preview.draft_id)}>
+                <${Icon} name="check" size=${14} /> Approve & activate
+              </button>
+              <button class="btn ghost" onClick=${() => setPreview(null)}>Discard</button>
+            </div>
+          </div>
+        </div>`}
+      </div>
+
+      <div class="stack">
+        <div class="card">
+          <div class="card-head">
+            <div class="card-title">Version history</div>
+            <button class="btn ghost sm" onClick=${load}><${Icon} name="refresh" size=${13} /></button>
+          </div>
+          <div class="scroll" style=${{maxHeight: '46vh'}}>
+            <table>
+              <thead><tr><th>Version</th><th>Effective</th><th>Status</th><th>Summary</th></tr></thead>
+              <tbody>${pols.map(p => html`<tr key=${p.id}>
+                <td class="mono">${p.version}</td>
+                <td class="tiny">${p.effective_date}</td>
+                <td><${Pill} color=${p.status === 'active' ? '#22c55e' : p.status === 'draft' ? '#f5a524' : '#64748b'}>${p.status}<//></td>
+                <td class="tiny dim">
+                  ${short(p.summary || '', 90)}
+                  ${p.status === 'draft' && canAmend ? html`<button class="btn sm primary" style=${{marginLeft: '6px'}} onClick=${() => approve(p.id)}>activate</button>` : null}
+                </td>
+              </tr>`)}</tbody>
+            </table>
+          </div>
+        </div>
+
+        <div class="card pad">
+          <div class="card-title" style=${{marginBottom: '8px'}}>How this stays code-free</div>
+          <div class="small muted" style=${{display: 'flex', flexDirection: 'column', gap: '7px'}}>
+            <div>• The engine is a pure interpreter: thresholds, windows, rule <b>order</b> and outcomes come from the document.</div>
+            <div>• A rule is <span class="code">when: {all: [...]}</span> → <span class="code">outcome: {route, supplier_strategy}</span>, so a brand-new kind of rule (e.g. plant-specific) is just data.</div>
+            <div>• Approving supersedes the previous active version; runs record which version they used in <span class="code">reason</span>.</div>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>`;
 }
 
-/* ---------------- Audit ---------------- */
-function Audit(){
-  const [rows,setRows]=useState([]); useEffect(()=>{api('/audit').then(setRows)},[]);
-  return html`<div class="card p-0 overflow-auto" style=${{maxHeight:'70vh'}}>
-    <table><thead><tr>${['When (UTC)','Actor','Action','Entity','Detail'].map(h=>html`<th key=${h}>${h}</th>`)}</tr></thead>
-    <tbody>${rows.map(r=>html`<tr key=${r.id}><td class="text-xs">${r.ts.replace('T',' ').slice(0,19)}</td><td>${r.actor}</td>
-      <td><${Pill}>${r.action}</${Pill}></td><td>${r.entity}</td><td class="text-xs text-slate-400 max-w-md truncate">${r.detail}</td></tr>`)}</tbody></table>
+/* ------------------------------------------------------------------ contracts */
+function Contracts({role, flash}) {
+  const [cs, setCs] = useState([]);
+  const [form, setForm] = useState(null);
+  const [busy, setBusy] = useState(false);
+  const load = () => api('/contracts').then(setCs).catch(e => flash('Error: ' + e));
+  useEffect(() => { load(); }, []);
+
+  const cap = cs.reduce((a, c) => a + (c.value_cap || 0), 0);
+  const used = cs.reduce((a, c) => a + (c.consumed_value || 0), 0);
+  const pdfOnly = cs.filter(c => c.source === 'pdf').length;
+
+  async function add() {
+    if (!form.contract_id || !form.supplier_id || !form.value_cap) return flash('Contract id, supplier and ceiling are required');
+    setBusy(true);
+    try {
+      const body = {
+        ...form,
+        value_cap: Number(form.value_cap),
+        lines: form.lines.split('\n').map(x => x.trim()).filter(Boolean).map(l => {
+          const [item_code, rate] = l.split(/[ ,\t]+/);
+          return {item_code, rate: Number(rate)};
+        }),
+        actor: role.toLowerCase(),
+      };
+      await jpost('/contracts', body);
+      flash('Contract added: ' + body.contract_id);
+      setForm(null); load();
+    } catch (e) { flash('Error: ' + e); }
+    setBusy(false);
+  }
+
+  return html`<div class="stack">
+    <div class="page-head">
+      <div>
+        <h1 class="page-title">Contracts</h1>
+        <div class="page-sub">Register rows plus contracts signed after the last update (PDF-only, binding from their start date, consumed = 0).</div>
+      </div>
+      <button class="btn primary" onClick=${() => setForm({contract_id: '', supplier_id: '', supplier_name: '',
+        start_date: '2026-11-15', end_date: '2027-11-14', value_cap: '', lines: ''})}>
+        + Add PDF-only contract
+      </button>
+    </div>
+
+    <div style=${{display: 'grid', gridTemplateColumns: 'repeat(auto-fit,minmax(160px,1fr))', gap: '10px'}}>
+      ${[
+        ['Contracts', num(cs.length), pdfOnly + ' PDF-only', '#4f8cff'],
+        ['Total ceiling', inr(cap), 'across all contracts', '#38bdf8'],
+        ['Consumed', inr(used), cap ? Math.round(used / cap * 100) + '% of ceiling' : '', '#f5a524'],
+        ['Remaining', inr(Math.max(cap - used, 0)), 'available ceiling', '#22c55e'],
+      ].map(([k, v, s, c]) => html`<div class="tile" key=${k} style=${{'--tilec': c}}>
+        <div class="k">${k}</div><div class="v">${v}</div><div class="s">${s}</div></div>`)}
+    </div>
+
+    <div class="card scroll" style=${{maxHeight: 'calc(100vh - 330px)'}}>
+      <table>
+        <thead><tr>${['Contract', 'Supplier', 'Validity', 'Ceiling', 'Consumed', 'Utilisation', 'Source', 'Items'].map(h => html`<th key=${h}>${h}</th>`)}</tr></thead>
+        <tbody>${cs.map(c => {
+          const u = c.value_cap ? Math.min(c.consumed_value / c.value_cap, 1) : 0;
+          return html`<tr key=${c.contract_id}>
+            <td class="mono">${c.contract_id}</td>
+            <td><div class="mono small">${c.supplier_id}</div><div class="tiny dim">${c.supplier_name}</div></td>
+            <td class="tiny">${c.start_date} → ${c.end_date}</td>
+            <td class="num">${inr(c.value_cap)}</td>
+            <td class="num">${inr(c.consumed_value)}</td>
+            <td><div class="row" style=${{gap: '7px'}}>
+              <${Bar} value=${u} /><span class="tiny dim">${Math.round(u * 100)}%</span></div>
+            </td>
+            <td><${Pill} color=${c.source === 'pdf' ? '#a78bfa' : '#64748b'}>${c.source}<//></td>
+            <td class="tiny dim" style=${{maxWidth: '260px'}}>
+              ${c.items.map(i => i.item_code + ' @ ' + inr(i.rate)).join(' · ')}
+            </td>
+          </tr>`;
+        })}</tbody>
+      </table>
+    </div>
+
+    ${form && html`<div class="overlay center" onClick=${() => setForm(null)}>
+      <div class="modal" onClick=${e => e.stopPropagation()}>
+        <div class="card-head">
+          <div>
+            <div class="card-title">Add a PDF-only contract</div>
+            <div class="card-sub">Binding from the start date; ceiling consumption starts at 0 (§4.4).</div>
+          </div>
+          <button class="btn ghost sm" onClick=${() => setForm(null)}><${Icon} name="x" size=${14} /></button>
+        </div>
+        <div class="pad">
+          <div style=${{display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0 12px'}}>
+            ${[['contract_id', 'Contract ID', 'RC-2026-033'], ['supplier_id', 'Supplier ID', 'S0xx'],
+               ['supplier_name', 'Supplier name', 'Name'], ['value_cap', 'Value ceiling (INR)', '2000000'],
+               ['start_date', 'Start date', 'YYYY-MM-DD'], ['end_date', 'End date', 'YYYY-MM-DD']].map(([k, label, ph]) => html`
+              <div class="field" key=${k}>
+                <label>${label}</label>
+                <input class="input" placeholder=${ph} value=${form[k]}
+                  onChange=${e => setForm(f => ({...f, [k]: e.target.value}))} />
+              </div>`)}
+          </div>
+          <div class="field">
+            <label>Contract lines — one per row: item code, rate</label>
+            <textarea class="input" rows="4" placeholder="ITM-1037 2439.01" value=${form.lines}
+              onChange=${e => setForm(f => ({...f, lines: e.target.value}))}></textarea>
+            <div class="hint">These lines make the contract usable immediately in §4 contract matching.</div>
+          </div>
+          <div class="row">
+            <button class="btn primary" disabled=${busy} onClick=${add}>Add contract</button>
+            <button class="btn ghost" onClick=${() => setForm(null)}>Cancel</button>
+          </div>
+        </div>
+      </div>
+    </div>`}
   </div>`;
 }
 
-ReactDOM.createRoot(document.getElementById('root')).render(html`<${App}/>`);
+/* ------------------------------------------------------------------ audit */
+function Audit({flash}) {
+  const [rows, setRows] = useState([]);
+  const [action, setAction] = useState('');
+  const [q, setQ] = useState('');
+  const load = () => api('/audit?limit=200').then(setRows).catch(e => flash('Error: ' + e));
+  useEffect(() => { load(); }, []);
+  const actions = [...new Set(rows.map(r => r.action))];
+  const shown = rows.filter(r => (!action || r.action === action) &&
+    (!q || (r.actor + ' ' + r.entity + ' ' + r.detail).toLowerCase().includes(q.toLowerCase())));
+
+  return html`<div class="stack">
+    <div class="page-head">
+      <div>
+        <h1 class="page-title">Audit trail</h1>
+        <div class="page-sub">Who did what, and when — every PR, approval, override, policy change and run (§8.1).</div>
+      </div>
+      <div class="row">
+        <div style=${{position: 'relative'}}>
+          <span style=${{position: 'absolute', left: '8px', top: '50%', transform: 'translateY(-50%)', color: 'var(--dim)'}}>
+            <${Icon} name="search" size=${13} /></span>
+          <input class="input compact" style=${{paddingLeft: '27px', width: '200px'}} placeholder="Search actor / detail"
+            value=${q} onChange=${e => setQ(e.target.value)} />
+        </div>
+        <button class="btn ghost" onClick=${load}><${Icon} name="refresh" size=${14} /> Refresh</button>
+      </div>
+    </div>
+
+    <div class="row">
+      <button class=${'btn sm ' + (!action ? 'primary' : 'ghost')} onClick=${() => setAction('')}>All · ${rows.length}</button>
+      ${actions.map(a => html`<button key=${a} class=${'btn sm ' + (action === a ? 'primary' : 'ghost')}
+        onClick=${() => setAction(a)}>${a}</button>`)}
+    </div>
+
+    <div class="card scroll" style=${{maxHeight: 'calc(100vh - 270px)'}}>
+      ${!rows.length ? html`<${Empty} title="Nothing logged yet">Process a batch or approve something to populate the trail.<//>`
+      : html`<table>
+        <thead><tr><th>When (UTC)</th><th>Actor</th><th>Action</th><th>Entity</th><th>Detail</th></tr></thead>
+        <tbody>${shown.map(r => html`<tr key=${r.id}>
+          <td class="tiny mono dim">${r.ts.replace('T', ' ').slice(0, 19)}</td>
+          <td><${Pill} plain>${r.actor}<//></td>
+          <td class="mono tiny">${r.action}</td>
+          <td class="tiny">${r.entity}</td>
+          <td class="tiny dim" style=${{maxWidth: '520px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap'}}>${r.detail}</td>
+        </tr>`)}</tbody>
+      </table>`}
+    </div>
+  </div>`;
+}
+
+ReactDOM.createRoot(document.getElementById('root')).render(html`<${App} />`);
 </script>
 </body>
 </html>

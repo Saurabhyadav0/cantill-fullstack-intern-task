@@ -114,5 +114,10 @@ business decision, implemented it, and recorded it here. Format: **what I notice
 - **Decided:** the policy schema expresses conditions over a generic context (`requirement.plant`, `item.category`, `requirement.value`, …) and an ordered rule list; the engine is a pure interpreter. An `add_rule` amendment with a `requirement.plant == CHK1` condition takes effect with no code change. (Covered by `test_add_rule_new_kind_plant_specific`.)
 - **Why:** this is the core of the "policy as data" bucket.
 
+### D-21 · Explaining a ranking, and editing policy without an AI key
+- **Noticed:** §6.2 requires the ranking to be *explainable*, and the blind test may hand us an amendment whose wording our heuristics cannot parse (no LLM key assumed on the exam machine).
+- **Decided:** (a) the engine exposes the same §6 computation with its components (`PreferredEngine.ranked_list_detailed`, `GET /api/items/{code}/preferred?as_of=`), and the buyer drawer renders each rank with its five weighted components, the reference price and whether that supplier was used on the decision; (b) the Policy tab offers both plain-English amendments **and** a structured-ops panel that posts ops (`set_param`, `set_rule_value`, `add_rule`, `remove_rule`) straight to the same preview/approve flow.
+- **Why:** the ranking must be defensible to a buyer without opening the PDF, and Run 2 must be applied *through the app* even if the amendment is worded in a way the heuristic parser doesn't recognise or the machine has no API key. Both paths are still data-only: no code change, and the ops are validated and previewed before anything activates.
+
 ---
 *Append new decisions as they arise during the build and before the freeze.*
