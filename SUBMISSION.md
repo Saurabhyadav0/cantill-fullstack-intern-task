@@ -4,6 +4,15 @@ One page that maps the brief's requirements to what exists in this repo, plus th
 runbook and the things only you can do (public repo, hosted link, video, the three CSVs).
 
 Deadlines are IST: **build freeze Thu 19 Nov 10:00**, **blind-test files pushed before 12:00 noon**.
+(The email writes "Wed 19 Nov" for the build deadline, but 19 Nov 2026 is a Thursday and the blind
+test it schedules is also dated Thu 19 Nov — so the whole sequence is treated as Thu 19 Nov.)
+
+The email asks for exactly: **public repo URL**, **hosted app URL**, and the **three blind-test CSVs**
+in `submission/` — plus `DECISIONS.md` and `APPROACH.md` inside the repo. A walkthrough video is
+*not* asked for by the email; `VIDEO_GUIDE.md` stays ready in case the submission form requests one.
+
+> Day-of companion: **`SUBMISSION_CHECKLIST.md`** — the required artifacts, their deadlines, the
+> pre-freeze git/deploy checks and the go/no-go table. Recording script: **`VIDEO_GUIDE.md`**.
 
 ---
 
@@ -20,11 +29,11 @@ Deadlines are IST: **build freeze Thu 19 Nov 10:00**, **blind-test files pushed 
 | Contracts incl. PDF-only | Contracts tab, `data/contracts/pdf_only_contracts.json` | ✅ |
 | Preferred supplier list + ranking | `engine/core.py` §6, drawer panel, CSV | ✅ formula + reasoning in `DECISIONS.md` D-10 |
 | Tests | `tests/` — `pytest` → **25 passed** | ✅ |
-| `DECISIONS.md` (judgment) | 21 recorded decisions | ✅ |
+| `DECISIONS.md` (judgment) | 22 recorded decisions (D-0 … D-21) | ✅ |
 | `APPROACH.md` (AI tools used) | tool list + architecture | ✅ |
-| **Public GitHub repo, no task data** | `.gitignore` blocks `data/`, `docs/policy-v5*.json`, `*.csv`, `*.pdf` | ⚠️ you must create/push the repo |
+| **Public GitHub repo, no task data** | https://github.com/Saurabhyadav0/cantill-fullstack-intern-task — `.gitignore` blocks `data/`, `docs/policy-v5*.json`, `*.csv`, `*.pdf`; verified public and verified no data file in any commit | ✅ done |
 | **Hosted link that stays up** | `README.md` → *Hosted demo* | ❌ you must deploy (steps in §5) |
-| **Walkthrough video** | script in `VIDEO_GUIDE.md` | ❌ you must record |
+| Walkthrough video *(not requested by the email)* | script in `VIDEO_GUIDE.md` | ⚠️ only if the form asks |
 | **3 blind-test CSVs in `submission/`** | `submission/` (`.gitignore` now allows `submission/*.csv`) | ⏳ Thursday, §4 |
 
 ---
@@ -168,6 +177,8 @@ deployed instance has data and the policy seeded.
 ---
 
 ## 6 · Final checklist (tick before you submit)
+
+The same checks, ordered by clock, are in **`SUBMISSION_CHECKLIST.md`**.
 
 - [ ] `pytest` → 25 passed
 - [ ] Public repo pushed; **no** `data/` CSVs, PDFs or `policy-v5*.json` in it

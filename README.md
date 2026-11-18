@@ -8,6 +8,10 @@ no code change**.
 > Cantill.ai Full-stack Intern task, Round 1. Full context in `CONTEXT.md`; scope in
 > `FEATURES.md`; plan in `TASK.md`; judgment calls in `DECISIONS.md`; tools in `APPROACH.md`.
 
+## Repository
+➡️ https://github.com/Saurabhyadav0/cantill-fullstack-intern-task — public, and it contains
+no task data (see `.gitignore` and `DECISIONS.md` D-0).
+
 ## Hosted demo
 ➡️ **<add hosted link here>** — set this before submitting; it must stay up through review
 (hosting steps: `SUBMISSION.md` §5).
@@ -19,6 +23,9 @@ no code change**.
 ## Submission
 Every requirement mapped to the folder it lives in, the pre-push checks, and the Thursday
 blind-test runbook: **`SUBMISSION.md`**.
+
+Day-of checklist — the required artifacts, their deadlines and the verification commands:
+**`SUBMISSION_CHECKLIST.md`**. Recording script for the walkthrough video: **`VIDEO_GUIDE.md`**.
 
 ## What works
 - **Chat intake** — "need 200 nitrile gloves for Chakan by next Friday" → matches ITM-1048,
