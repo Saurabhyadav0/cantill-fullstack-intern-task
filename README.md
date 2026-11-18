@@ -13,19 +13,10 @@ no code change**.
 no task data (see `.gitignore` and `DECISIONS.md` D-0).
 
 ## Hosted demo
-➡️ **<add hosted link here>** — set this before submitting; it must stay up through review
-(hosting steps: `SUBMISSION.md` §5).
+➡️ **https://cantill-pr-po-latest.onrender.com**  _(free tier — first load may take ~30–60s to wake)_
 
-## Demo video
-➡️ **<add unlisted video link here>** — shot list, script and the two live policy changes are in
-`VIDEO_GUIDE.md`.
-
-## Submission
-Every requirement mapped to the folder it lives in, the pre-push checks, and the Thursday
-blind-test runbook: **`SUBMISSION.md`**.
-
-Day-of checklist — the required artifacts, their deadlines and the verification commands:
-**`SUBMISSION_CHECKLIST.md`**. Recording script for the walkthrough video: **`VIDEO_GUIDE.md`**.
+Runs with **no environment variables**. (Optional: set `ANTHROPIC_API_KEY` to enable
+LLM-assisted amendment parsing — the app is fully functional without it.)
 
 ## What works
 - **Chat intake** — "need 200 nitrile gloves for Chakan by next Friday" → matches ITM-1048,
