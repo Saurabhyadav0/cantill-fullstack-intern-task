@@ -12,8 +12,10 @@ engine/   PURE Python decision engine — no web, no DB, no network.
 api/      FastAPI app. db.py (stdlib sqlite3: versioned policies, audit, added
           contracts, chat PRs, runs, overrides) · amend.py (amendment ops + plain-language
           preview + optional LLM) · chat.py (NL → PR, heuristic) · main.py (routes + serves UI)
-web/      Single-file SPA (React 18 + htm + Tailwind via CDN) served by FastAPI:
-          chat intake, buyer workspace, policy admin, contracts, audit.
+web/      Single-file SPA (React 18 + htm, hand-written CSS, CDN only — no build step)
+          served by FastAPI: chat intake, buyer workspace (decision + why + explainable
+          §6 ranking), policy admin (plain-English amendments and structured ops),
+          contracts, audit.
 tests/    25 tests: 14 worked decisions + 3 preferred rankings + invariants + API/blind-test loop.
 ```
 
@@ -37,7 +39,10 @@ Versioned documents in SQLite (`version`, `effective_date`, `status`, body JSONB
 amendment is parsed (structured ops, a heuristic NL parser, or Claude if a key is set) into
 ops over the document, previewed in plain language, and approved into a new active version.
 Supports changed limits, changed windows, and **adding a new kind of rule** (e.g.
-plant-specific) — all as data.
+plant-specific) — all as data. The UI exposes both paths: plain English and, for anything the
+heuristics can't phrase, a structured-ops panel that posts ops directly. The same document holds
+the §6 ranking weights, which the buyer drawer reads back to explain each preferred-supplier rank
+(`GET /api/items/{code}/preferred`).
 
 ## AI tools used
 - **Claude Code (Opus 4.8)** — built the engine, API, frontend, tests, and docs; iterated the

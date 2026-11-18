@@ -38,3 +38,7 @@ venv/
 
 # runtime db
 api/app.db
+
+# blind-test deliverables: the kit's CSVs stay ignored, but the three submission
+# outputs must be committed (see SUBMISSION.md §4). Last matching rule wins.
+!submission/*.csv

@@ -9,7 +9,16 @@ no code change**.
 > `FEATURES.md`; plan in `TASK.md`; judgment calls in `DECISIONS.md`; tools in `APPROACH.md`.
 
 ## Hosted demo
-➡️ **<add hosted link here>**
+➡️ **<add hosted link here>** — set this before submitting; it must stay up through review
+(hosting steps: `SUBMISSION.md` §5).
+
+## Demo video
+➡️ **<add unlisted video link here>** — shot list, script and the two live policy changes are in
+`VIDEO_GUIDE.md`.
+
+## Submission
+Every requirement mapped to the folder it lives in, the pre-push checks, and the Thursday
+blind-test runbook: **`SUBMISSION.md`**.
 
 ## What works
 - **Chat intake** — "need 200 nitrile gloves for Chakan by next Friday" → matches ITM-1048,
@@ -23,6 +32,11 @@ no code change**.
 - **Buyer workspace** — requirements with decision, value, supplier/price or ranked suggestions,
   and the **why** (clause + version + contract/PO). Approve creates the PO/RFQ; Override needs a
   reason; every action is audited.
+- **Explainable preferred lists** — the drawer shows the §6 ranking with the score behind each
+  position (frequency · recency · contract · on-time · quality), the weights read from the policy
+  document, and which of those suppliers the decision actually used.
+- **Amendments two ways** — describe the change in plain English, or apply **structured ops** in the
+  UI when it is a brand-new kind of rule (e.g. plant-specific). Neither needs an AI key or a deploy.
 - **API & exports** — `POST /api/process-batch`; `decisions.csv`; `preferred.csv?as_of=`.
 - **Contracts** — register loaded; add a PDF-only contract (manual entry), used immediately.
 
