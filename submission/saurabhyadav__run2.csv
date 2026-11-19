@@ -1,0 +1,191 @@
+pr_no,pr_line,resolved_item_code,group_id,po_id,decision,route,supplier_id,unit_price,group_value_inr,suggested_supplier_ids,policy_version,reason
+PR-26-00501,1,ITM-1009,REQ-0003,PO-0001,PO,CONTRACT_PO,S007,7,173958,,5.1,"Contract RC-2026-013 (Precision Fasteners Co) covers the item, valid on 2026-11-23, supplier Active, ceiling left (5.2/4.1-4.3)."
+PR-26-00502,1,ITM-1021,REQ-0141,PO-0077,PO,SPOT_PO,S013,202,74814,,5.1,SPOT_PO to 1st preferred supplier at reference price (clause 5.4); value Rs 74814.
+PR-26-00503,1,ITM-1052,REQ-0136,PO-0073,PO,SPOT_PO,S033,34848,96208,,5.1,SPOT_PO to 1st preferred supplier at reference price (clause 5.4); value Rs 96208.
+PR-26-00504,1,ITM-1024,REQ-0106,PO-0058,PO,CONTRACT_PO,S013,311,12450,,5.1,"Contract RC-2026-002 (Industrial Bearings Co) covers the item, valid on 2026-12-04, supplier Active, ceiling left (5.2/4.1-4.3)."
+PR-26-00505,1,ITM-1007,REQ-0098,,SOURCING_REQUEST,RFQ,,,301267,S001;S003;S002,5.1,RFQ: value Rs 301267 (clause 5.5); 3 suppliers suggested (6.4).
+PR-26-00506,1,ITM-1049,REQ-0047,PO-0032,PO,CONTRACT_PO,S029,191,145396,,5.1,"Contract RC-2026-007 (SafeGuard Industrial Supplies) covers the item, valid on 2026-11-28, supplier Active, ceiling left (5.2/4.1-4.3)."
+PR-26-00507,1,ITM-1001,REQ-0155,PO-0082,PO,CONTRACT_PO,S001,6340,31702,,5.1,"Contract RC-2025-011 (Bhosari Steel Traders) covers the item, valid on 2026-12-11, supplier Active, ceiling left (5.2/4.1-4.3)."
+PR-26-00508,1,ITM-1047,REQ-0099,PO-0054,PO,CONTRACT_PO,S029,26,300035,,5.1,"Contract RC-2026-007 (SafeGuard Industrial Supplies) covers the item, valid on 2026-12-03, supplier Active, ceiling left (5.2/4.1-4.3)."
+PR-26-00509,1,ITM-1019,REQ-0056,PO-0037,PO,CONTRACT_PO,S009,39,14534,,5.1,"Contract RC-2025-014 (Weldtech Supplies) covers the item, valid on 2026-11-28, supplier Active, ceiling left (5.2/4.1-4.3)."
+PR-26-00510,1,ITM-1002,REQ-0024,PO-0016,PO,CONTRACT_PO,S001,9169,110025,,5.1,"Contract RC-2025-011 (Bhosari Steel Traders) covers the item, valid on 2026-11-25, supplier Active, ceiling left (5.2/4.1-4.3)."
+PR-26-00511,1,ITM-1048,REQ-0139,PO-0076,PO,CONTRACT_PO,S029,90,74966,,5.1,"Contract RC-2026-007 (SafeGuard Industrial Supplies) covers the item, valid on 2026-12-08, supplier Active, ceiling left (5.2/4.1-4.3)."
+PR-26-00512,1,ITM-1015,REQ-0021,PO-0013,PO,CONTRACT_PO,S009,159,163265,,5.1,"Contract RC-2025-014 (Weldtech Supplies) covers the item, valid on 2026-11-24, supplier Active, ceiling left (5.2/4.1-4.3)."
+PR-26-00513,1,ITM-1010,REQ-0004,PO-0001,PO,CONTRACT_PO,S007,2,276912,,5.1,"Contract RC-2026-013 (Precision Fasteners Co) covers the item, valid on 2026-11-23, supplier Active, ceiling left (5.2/4.1-4.3)."
+PR-26-00514,1,ITM-1023,REQ-0034,PO-0021,PO,SPOT_PO,S014,1500,176964,,5.1,SPOT_PO to 1st preferred supplier at reference price (clause 5.4); value Rs 176964.
+PR-26-00515,1,ITM-1022,REQ-0137,PO-0074,PO,CONTRACT_PO,S013,580,23185,,5.1,"Contract RC-2026-002 (Industrial Bearings Co) covers the item, valid on 2026-12-08, supplier Active, ceiling left (5.2/4.1-4.3)."
+PR-26-00516,1,ITM-1053,REQ-0058,,SOURCING_REQUEST,RFQ,,,212259,S032;S033,5.1,RFQ: value Rs 212259 (clause 5.5); 2 suppliers suggested (6.4).
+PR-26-00517,1,ITM-1061,REQ-0039,PO-0026,PO,CONTRACT_PO,S038,178464,356927,,5.1,"Contract RC-2026-012 (Sparkle Facility Services) covers the item, valid on 2026-11-27, supplier Active, ceiling left (5.2/4.1-4.3)."
+PR-26-00518,1,ITM-1006,REQ-0046,,SOURCING_REQUEST,RFQ,,,284700,S003;S002;S005,5.1,RFQ: value Rs 284700 (clause 5.5); 3 suppliers suggested (6.4).
+PR-26-00519,1,ITM-1041,REQ-0083,PO-0049,PO,CONTRACT_PO,S025,72,253825,,5.1,"Contract RC-2026-009 (Kaveri Corrugators) covers the item, valid on 2026-12-02, supplier Active, ceiling left (5.2/4.1-4.3)."
+PR-26-00520,1,ITM-1016,REQ-0028,PO-0013,PO,CONTRACT_PO,S009,115,149838,,5.1,"Contract RC-2025-014 (Weldtech Supplies) covers the item, valid on 2026-11-25, supplier Active, ceiling left (5.2/4.1-4.3)."
+PR-26-00521,1,ITM-1046,REQ-0092,PO-0054,PO,CONTRACT_PO,S029,1092,251075,,5.1,"Contract RC-2026-007 (SafeGuard Industrial Supplies) covers the item, valid on 2026-12-03, supplier Active, ceiling left (5.2/4.1-4.3)."
+PR-26-00522,1,ITM-1013,REQ-0072,PO-0043,PO,SPOT_PO,S007,38,69104,,5.1,SPOT_PO to 1st preferred supplier at reference price (clause 5.4); value Rs 69104.
+PR-26-00523,1,ITM-1003,REQ-0015,PO-0009,PO,CONTRACT_PO,S001,84,266971,,5.1,"Contract RC-2025-011 (Bhosari Steel Traders) covers the item, valid on 2026-11-24, supplier Active, ceiling left (5.2/4.1-4.3)."
+PR-26-00524,1,ITM-1014,REQ-0063,,SOURCING_REQUEST,RFQ,,,231581,S006;S007,5.1,RFQ: value Rs 231581 (clause 5.5); 2 suppliers suggested (6.4).
+PR-26-00525,1,ITM-1022,REQ-0006,PO-0002,PO,SPOT_PO,S014,640,63758,,5.1,SPOT_PO to 1st preferred supplier at reference price (clause 5.4); value Rs 63758.
+PR-26-00526,1,ITM-1023,REQ-0154,PO-0081,PO,SPOT_PO,S014,1500,68063,,5.1,SPOT_PO to 1st preferred supplier at reference price (clause 5.4); value Rs 68063.
+PR-26-00527,1,ITM-1023,REQ-0040,PO-0027,PO,SPOT_PO,S014,1500,95288,,5.1,SPOT_PO to 1st preferred supplier at reference price (clause 5.4); value Rs 95288.
+PR-26-00528,1,ITM-1022,REQ-0105,PO-0057,PO,SPOT_PO,S014,640,110128,,5.1,SPOT_PO to 1st preferred supplier at reference price (clause 5.4); value Rs 110128.
+PR-26-00529,1,ITM-1022,REQ-0119,PO-0065,PO,SPOT_PO,S014,640,127516,,5.1,SPOT_PO to 1st preferred supplier at reference price (clause 5.4); value Rs 127516.
+PR-26-00530,1,ITM-1022,REQ-0105,PO-0057,PO,SPOT_PO,S014,640,110128,,5.1,SPOT_PO to 1st preferred supplier at reference price (clause 5.4); value Rs 110128.
+PR-26-00531,1,ITM-1009,REQ-0082,PO-0048,PO,SPOT_PO,S006,7,17931,,5.1,SPOT_PO to 1st preferred supplier at reference price (clause 5.4); value Rs 17931.
+PR-26-00532,1,ITM-1009,REQ-0003,PO-0001,PO,CONTRACT_PO,S007,7,173958,,5.1,"Contract RC-2026-013 (Precision Fasteners Co) covers the item, valid on 2026-11-23, supplier Active, ceiling left (5.2/4.1-4.3)."
+PR-26-00533,1,ITM-1009,REQ-0013,PO-0008,PO,CONTRACT_PO,S007,7,22098,,5.1,"Contract RC-2026-013 (Precision Fasteners Co) covers the item, valid on 2026-11-24, supplier Active, ceiling left (5.2/4.1-4.3)."
+PR-26-00534,1,ITM-1009,REQ-0003,PO-0001,PO,CONTRACT_PO,S007,7,173958,,5.1,"Contract RC-2026-013 (Precision Fasteners Co) covers the item, valid on 2026-11-23, supplier Active, ceiling left (5.2/4.1-4.3)."
+PR-26-00535,1,ITM-1009,REQ-0122,PO-0066,PO,SPOT_PO,S006,7,16834,,5.1,SPOT_PO to 1st preferred supplier at reference price (clause 5.4); value Rs 16834.
+PR-26-00536,1,ITM-1057,REQ-0009,PO-0004,PO,CONTRACT_PO,S035,10690,320685,,5.1,"Contract RC-2026-033 (Infoline Systems) covers the item, valid on 2026-11-24, supplier Active, ceiling left (5.2/4.1-4.3)."
+PR-26-00537,1,ITM-1036,REQ-0055,PO-0036,PO,CONTRACT_PO,S021,3538,70755,,5.1,"Contract RC-2026-031 (Pneumatic Point) covers the item, valid on 2026-11-28, supplier Active, ceiling left (5.2/4.1-4.3)."
+PR-26-00538,1,ITM-1039,REQ-0012,PO-0007,PO,CONTRACT_PO,S021,2747,164812,,5.1,"Contract RC-2026-031 (Pneumatic Point) covers the item, valid on 2026-11-24, supplier Active, ceiling left (5.2/4.1-4.3)."
+PR-26-00539,1,ITM-1056,REQ-0112,PO-0062,PO,CONTRACT_PO,S035,64654,193963,,5.1,"Contract RC-2026-033 (Infoline Systems) covers the item, valid on 2026-12-05, supplier Active, ceiling left (5.2/4.1-4.3)."
+PR-26-00540,1,ITM-1037,REQ-0051,PO-0034,PO,CONTRACT_PO,S021,2439,195121,,5.1,"Contract RC-2026-031 (Pneumatic Point) covers the item, valid on 2026-11-28, supplier Active, ceiling left (5.2/4.1-4.3)."
+PR-26-00541,1,ITM-1056,REQ-0064,PO-0040,PO,CONTRACT_PO,S035,64654,129309,,5.1,"Contract RC-2026-033 (Infoline Systems) covers the item, valid on 2026-11-30, supplier Active, ceiling left (5.2/4.1-4.3)."
+PR-26-00542,1,ITM-1057,REQ-0114,PO-0064,PO,CONTRACT_PO,S035,10690,85516,,5.1,"Contract RC-2026-033 (Infoline Systems) covers the item, valid on 2026-12-05, supplier Active, ceiling left (5.2/4.1-4.3)."
+PR-26-00543,1,ITM-1036,REQ-0091,PO-0053,PO,CONTRACT_PO,S021,3538,60142,,5.1,"Contract RC-2026-031 (Pneumatic Point) covers the item, valid on 2026-12-03, supplier Active, ceiling left (5.2/4.1-4.3)."
+PR-26-00544,1,ITM-1037,REQ-0016,PO-0010,PO,CONTRACT_PO,S021,2439,219511,,5.1,"Contract RC-2026-031 (Pneumatic Point) covers the item, valid on 2026-11-24, supplier Active, ceiling left (5.2/4.1-4.3)."
+PR-26-00545,1,ITM-1039,REQ-0130,PO-0070,PO,CONTRACT_PO,S021,2747,137344,,5.1,"Contract RC-2026-031 (Pneumatic Point) covers the item, valid on 2026-12-06, supplier Active, ceiling left (5.2/4.1-4.3)."
+PR-26-00546,1,ITM-1073,REQ-0074,,SOURCING_REQUEST,CAPEX_SOURCING,,,2300000,S045;S047;S020;S048;S046,5.1,CAPEX_SOURCING: value Rs 2300000 (clause 5.1); 5 suppliers suggested (6.4).
+PR-26-00547,1,ITM-1072,REQ-0145,,SOURCING_REQUEST,CAPEX_SOURCING,,,2738201,S045;S047;S020;S048;S046,5.1,CAPEX_SOURCING: value Rs 2738201 (clause 5.1); 5 suppliers suggested (6.4).
+PR-26-00548,1,ITM-1071,REQ-0033,,SOURCING_REQUEST,CAPEX_SOURCING,,,4527528,S045;S047;S020;S048;S046,5.1,CAPEX_SOURCING: value Rs 4527528 (clause 5.1); 5 suppliers suggested (6.4).
+PR-26-00549,1,ITM-1073,REQ-0044,,SOURCING_REQUEST,CAPEX_SOURCING,,,4600000,S045;S047;S020;S048;S046,5.1,CAPEX_SOURCING: value Rs 4600000 (clause 5.1); 5 suppliers suggested (6.4).
+PR-26-00550,1,ITM-1060,REQ-0121,,SOURCING_REQUEST,RFQ,,,145000,S035;S036;S037,5.1,RFQ: value Rs 145000 (clause 5.5); 3 suppliers suggested (6.4).
+PR-26-00551,1,ITM-1032,REQ-0109,,SOURCING_REQUEST,RFQ,,,47000,S017;S020;S019,5.1,RFQ: value Rs 47000 (clause 5.5); 3 suppliers suggested (6.4).
+PR-26-00552,1,ITM-1055,REQ-0002,,SOURCING_REQUEST,RFQ,,,13800,S033;S032,5.1,RFQ: value Rs 13800 (clause 5.5); 2 suppliers suggested (6.4).
+PR-26-00553,1,ITM-1032,REQ-0115,,SOURCING_REQUEST,RFQ,,,258500,S017;S020;S019,5.1,RFQ: value Rs 258500 (clause 5.5); 3 suppliers suggested (6.4).
+PR-26-00554,1,ITM-1060,REQ-0143,,SOURCING_REQUEST,RFQ,,,174000,S035;S036;S037,5.1,RFQ: value Rs 174000 (clause 5.5); 3 suppliers suggested (6.4).
+PR-26-00555,1,ITM-1042,REQ-0131,PO-0071,PO,EMERGENCY_PO,S026,1159,419888,,5.1,EMERGENCY_PO to 1st preferred supplier at reference price (clause 5.3); value Rs 419888.
+PR-26-00556,1,ITM-1004,REQ-0066,PO-0041,PO,EMERGENCY_PO,S003,23774,380380,,5.1,EMERGENCY_PO to 1st preferred supplier at reference price (clause 5.3); value Rs 380380.
+PR-26-00557,1,ITM-1043,REQ-0007,PO-0003,PO,EMERGENCY_PO,S026,176,344764,,5.1,EMERGENCY_PO to 1st preferred supplier at reference price (clause 5.3); value Rs 344764.
+PR-26-00558,1,ITM-1031,REQ-0014,,SOURCING_REQUEST,RFQ,,,161993,S019;S017;S018,5.1,RFQ: value Rs 161993 (clause 5.2A); 3 suppliers suggested (6.4).
+PR-26-00559,1,ITM-1051,REQ-0035,PO-0022,PO,EMERGENCY_PO,S029,9,279882,,5.1,EMERGENCY_PO to 1st preferred supplier at reference price (clause 5.3); value Rs 279882.
+PR-26-00560,1,ITM-1033,REQ-0010,PO-0005,PO,EMERGENCY_PO,S020,65838,131676,,5.1,EMERGENCY_PO to 1st preferred supplier at reference price (clause 5.3); value Rs 131676.
+PR-26-00561,1,ITM-1027,REQ-0127,PO-0068,PO,SPOT_PO,S013,259,10374,,5.1,SPOT_PO to 1st preferred supplier at reference price (clause 5.4); value Rs 10374.
+PR-26-00562,1,ITM-1050,REQ-0036,PO-0023,PO,SPOT_PO,S029,131,84208,,5.1,SPOT_PO to 1st preferred supplier at reference price (clause 5.4); value Rs 84208.
+PR-26-00563,1,ITM-1012,REQ-0029,PO-0018,PO,SPOT_PO,S006,1,104936,,5.1,SPOT_PO to 1st preferred supplier at reference price (clause 5.4); value Rs 104936.
+PR-26-00564,1,ITM-1038,REQ-0104,PO-0056,PO,SPOT_PO,S024,166,69892,,5.1,SPOT_PO to 1st preferred supplier at reference price (clause 5.4); value Rs 69892.
+PR-26-00565,1,ITM-1058,REQ-0084,PO-0050,PO,SPOT_PO,S036,258,157252,,5.1,SPOT_PO to 1st preferred supplier at reference price (clause 5.4); value Rs 157252.
+PR-26-00566,1,ITM-1045,REQ-0065,,SOURCING_REQUEST,RFQ,,,236726,S028;S027;S025,5.1,RFQ: value Rs 236726 (clause 5.5); 3 suppliers suggested (6.4).
+PR-26-00567,1,ITM-1059,REQ-0059,PO-0038,PO,SPOT_PO,S035,3000,41995,,5.1,SPOT_PO to 1st preferred supplier at reference price (clause 5.4); value Rs 41995.
+PR-26-00568,1,ITM-1026,REQ-0134,PO-0072,PO,SPOT_PO,S014,106,168080,,5.1,SPOT_PO to 1st preferred supplier at reference price (clause 5.4); value Rs 168080.
+PR-26-00569,1,ITM-1034,REQ-0037,PO-0024,PO,SPOT_PO,S020,41416,165662,,5.1,SPOT_PO to 1st preferred supplier at reference price (clause 5.4); value Rs 165662.
+PR-26-00570,1,ITM-1017,REQ-0041,PO-0028,PO,SPOT_PO,S012,1614,91702,,5.1,SPOT_PO to 1st preferred supplier at reference price (clause 5.4); value Rs 91702.
+PR-26-00571,1,ITM-1018,REQ-0088,PO-0052,PO,SPOT_PO,S009,1187,119865,,5.1,SPOT_PO to 1st preferred supplier at reference price (clause 5.4); value Rs 119865.
+PR-26-00572,1,ITM-1030,REQ-0113,PO-0063,PO,SPOT_PO,S017,1150,14948,,5.1,SPOT_PO to 1st preferred supplier at reference price (clause 5.4); value Rs 14948.
+PR-26-00573,1,ITM-1029,REQ-0054,,SOURCING_REQUEST,RFQ,,,222592,S020;S017;S019,5.1,RFQ: value Rs 222592 (clause 5.2A); 3 suppliers suggested (6.4).
+PR-26-00574,1,ITM-1054,REQ-0043,PO-0030,PO,SPOT_PO,S032,192,53651,,5.1,SPOT_PO to 1st preferred supplier at reference price (clause 5.4); value Rs 53651.
+PR-26-00575,1,ITM-1035,REQ-0147,PO-0079,PO,SPOT_PO,S023,392,94037,,5.1,SPOT_PO to 1st preferred supplier at reference price (clause 5.4); value Rs 94037.
+PR-26-00576,1,ITM-1020,REQ-0128,PO-0069,PO,SPOT_PO,S009,210,31869,,5.1,SPOT_PO to 1st preferred supplier at reference price (clause 5.4); value Rs 31869.
+PR-26-00577,1,ITM-1005,REQ-0045,PO-0031,PO,SPOT_PO,S003,74,75827,,5.1,SPOT_PO to 1st preferred supplier at reference price (clause 5.4); value Rs 75827.
+PR-26-00578,1,ITM-1044,REQ-0053,PO-0035,PO,SPOT_PO,S027,22,50220,,5.1,SPOT_PO to 1st preferred supplier at reference price (clause 5.4); value Rs 50220.
+PR-26-00579,1,ITM-1008,REQ-0048,PO-0033,PO,SPOT_PO,S001,86,133362,,5.1,SPOT_PO to 1st preferred supplier at reference price (clause 5.4); value Rs 133362.
+PR-26-00580,1,ITM-1028,REQ-0031,,SOURCING_REQUEST,RFQ,,,448628,S019;S017;S020,5.1,RFQ: value Rs 448628 (clause 5.5); 3 suppliers suggested (6.4).
+PR-26-00581,1,ITM-1040,REQ-0124,PO-0067,PO,SPOT_PO,S023,19152,19152,,5.1,SPOT_PO to 1st preferred supplier at reference price (clause 5.4); value Rs 19152.
+PR-26-00582,1,ITM-1033,REQ-0138,PO-0075,PO,SPOT_PO,S020,65838,65838,,5.1,SPOT_PO to 1st preferred supplier at reference price (clause 5.4); value Rs 65838.
+PR-26-00583,1,ITM-1054,REQ-0142,PO-0078,PO,SPOT_PO,S032,192,153288,,5.1,SPOT_PO to 1st preferred supplier at reference price (clause 5.4); value Rs 153288.
+PR-26-00584,1,ITM-1045,REQ-0065,,SOURCING_REQUEST,RFQ,,,236726,S028;S027;S025,5.1,RFQ: value Rs 236726 (clause 5.5); 3 suppliers suggested (6.4).
+PR-26-00585,1,ITM-1050,REQ-0050,PO-0029,PO,SPOT_PO,S029,131,168415,,5.1,SPOT_PO to 1st preferred supplier at reference price (clause 5.4); value Rs 168415.
+PR-26-00586,1,ITM-1020,REQ-0128,PO-0069,PO,SPOT_PO,S009,210,31869,,5.1,SPOT_PO to 1st preferred supplier at reference price (clause 5.4); value Rs 31869.
+PR-26-00587,1,ITM-1038,REQ-0030,PO-0019,PO,SPOT_PO,S024,166,14977,,5.1,SPOT_PO to 1st preferred supplier at reference price (clause 5.4); value Rs 14977.
+PR-26-00588,1,ITM-1058,REQ-0017,PO-0011,PO,SPOT_PO,S036,258,107756,,5.1,SPOT_PO to 1st preferred supplier at reference price (clause 5.4); value Rs 107756.
+PR-26-00589,1,ITM-1066,REQ-0005,,SOURCING_REQUEST,RFP,,,807749,S043;S044;S042,5.1,RFP: value Rs 807749 (clause 5.6); 3 suppliers suggested (6.4).
+PR-26-00590,1,ITM-1068,REQ-0135,,SOURCING_REQUEST,RFQ,,,415043,S043;S042;S044,5.1,RFQ: value Rs 415043 (clause 5.5); 3 suppliers suggested (6.4).
+PR-26-00591,1,ITM-1044,REQ-0100,,SOURCING_REQUEST,RFQ,,,556238,S027;S028;S025,5.1,RFQ: value Rs 556238 (clause 5.5); 3 suppliers suggested (6.4).
+PR-26-00592,1,ITM-1031,REQ-0027,,SOURCING_REQUEST,RFQ,,,206991,S019;S017;S018,5.1,RFQ: value Rs 206991 (clause 5.5); 3 suppliers suggested (6.4).
+PR-26-00593,1,ITM-1028,REQ-0025,,SOURCING_REQUEST,RFQ,,,795296,S019;S017;S020,5.1,RFQ: value Rs 795296 (clause 5.2A); 3 suppliers suggested (6.4).
+PR-26-00594,1,ITM-1034,REQ-0061,,SOURCING_REQUEST,RFQ,,,496987,S020;S017;S019,5.1,RFQ: value Rs 496987 (clause 5.2A); 3 suppliers suggested (6.4).
+PR-26-00595,1,ITM-1061,REQ-0080,PO-0046,PO,CONTRACT_PO,S038,178464,535391,,5.1,"Contract RC-2026-012 (Sparkle Facility Services) covers the item, valid on 2026-12-02, supplier Active, ceiling left (5.2/4.1-4.3)."
+PR-26-00596,1,ITM-1029,REQ-0101,,SOURCING_REQUEST,RFQ,,,476982,S020;S017;S019,5.1,RFQ: value Rs 476982 (clause 5.5); 3 suppliers suggested (6.4).
+PR-26-00597,1,ITM-1030,REQ-0094,,SOURCING_REQUEST,RFQ,,,218477,S017;S019;S018,5.1,RFQ: value Rs 218477 (clause 5.2A); 3 suppliers suggested (6.4).
+PR-26-00598,1,ITM-1043,REQ-0049,,SOURCING_REQUEST,RFQ,,,580470,S026;S027;S028,5.1,RFQ: value Rs 580470 (clause 5.5); 3 suppliers suggested (6.4).
+PR-26-00599,1,ITM-1004,REQ-0151,,SOURCING_REQUEST,RFP,,,1664162,S003;S002;S005;S001,5.1,RFP: value Rs 1664162 (clause 5.6); 4 suppliers suggested (6.4).
+PR-26-00600,1,ITM-1040,REQ-0146,,SOURCING_REQUEST,RFP,,,2451492,S023;S024;S021;S022,5.1,RFP: value Rs 2451492 (clause 5.6); 4 suppliers suggested (6.4).
+PR-26-00601,1,ITM-1059,REQ-0070,,SOURCING_REQUEST,RFP,,,2321737,S035;S036;S037,5.1,RFP: value Rs 2321737 (clause 5.6); 3 suppliers suggested (6.4).
+PR-26-00602,1,ITM-1035,REQ-0108,,SOURCING_REQUEST,RFP,,,1430143,S023;S024;S021;S022,5.1,RFP: value Rs 1430143 (clause 5.6); 4 suppliers suggested (6.4).
+PR-26-00603,1,ITM-1042,REQ-0086,,SOURCING_REQUEST,RFQ,,,179952,S026;S028;S025,5.1,RFQ: value Rs 179952 (clause 5.5); 3 suppliers suggested (6.4).
+PR-26-00604,1,ITM-1042,REQ-0095,,SOURCING_REQUEST,RFQ,,,179952,S026;S028;S025,5.1,RFQ: value Rs 179952 (clause 5.5); 3 suppliers suggested (6.4).
+PR-26-00605,1,ITM-1045,REQ-0090,,SOURCING_REQUEST,RFQ,,,131090,S028;S027;S025,5.1,RFQ: value Rs 131090 (clause 5.5); 3 suppliers suggested (6.4).
+PR-26-00606,1,ITM-1044,REQ-0096,,SOURCING_REQUEST,RFQ,,,148966,S027;S028;S025,5.1,RFQ: value Rs 148966 (clause 5.5); 3 suppliers suggested (6.4).
+PR-26-00607,1,ITM-1043,REQ-0126,,SOURCING_REQUEST,RFQ,,,193490,S026;S027;S028,5.1,RFQ: value Rs 193490 (clause 5.5); 3 suppliers suggested (6.4).
+PR-26-00608,1,ITM-1045,REQ-0140,,SOURCING_REQUEST,RFQ,,,123454,S028;S027;S025,5.1,RFQ: value Rs 123454 (clause 5.5); 3 suppliers suggested (6.4).
+PR-26-00609,1,ITM-1043,REQ-0049,,SOURCING_REQUEST,RFQ,,,580470,S026;S027;S028,5.1,RFQ: value Rs 580470 (clause 5.5); 3 suppliers suggested (6.4).
+PR-26-00610,1,ITM-1044,REQ-0089,,SOURCING_REQUEST,RFQ,,,151508,S027;S028;S025,5.1,RFQ: value Rs 151508 (clause 5.5); 3 suppliers suggested (6.4).
+PR-26-00611,1,ITM-1029,REQ-0132,,SOURCING_REQUEST,RFQ,,,127195,S020;S017;S019,5.1,RFQ: value Rs 127195 (clause 5.2A); 3 suppliers suggested (6.4).
+PR-26-00612,1,ITM-1031,REQ-0103,,SOURCING_REQUEST,RFQ,,,98996,S019;S017;S018,5.1,RFQ: value Rs 98996 (clause 5.2A); 3 suppliers suggested (6.4).
+PR-26-00613,1,ITM-1030,REQ-0097,,SOURCING_REQUEST,RFQ,,,80492,S017;S019;S018,5.1,RFQ: value Rs 80492 (clause 5.2A); 3 suppliers suggested (6.4).
+PR-26-00614,1,ITM-1033,REQ-0123,,SOURCING_REQUEST,RFQ,,,131676,S020;S017;S019,5.1,RFQ: value Rs 131676 (clause 5.2A); 3 suppliers suggested (6.4).
+PR-26-00615,1,ITM-1034,REQ-0076,,SOURCING_REQUEST,RFQ,,,82831,S020;S017;S019,5.1,RFQ: value Rs 82831 (clause 5.2A); 3 suppliers suggested (6.4).
+PR-26-00616,1,ITM-1028,REQ-0079,,SOURCING_REQUEST,RFQ,,,163138,S019;S017;S020,5.1,RFQ: value Rs 163138 (clause 5.2A); 3 suppliers suggested (6.4).
+PR-26-00617,1,ITM-1029,REQ-0144,,SOURCING_REQUEST,RFQ,,,158994,S020;S017;S019,5.1,RFQ: value Rs 158994 (clause 5.2A); 3 suppliers suggested (6.4).
+PR-26-00618,1,ITM-1031,REQ-0073,,SOURCING_REQUEST,RFQ,,,76497,S019;S017;S018,5.1,RFQ: value Rs 76497 (clause 5.2A); 3 suppliers suggested (6.4).
+PR-26-00619,1,ITM-1030,REQ-0001,,SOURCING_REQUEST,RFQ,,,206978,S017;S019;S018,5.1,RFQ: value Rs 206978 (clause 5.5); 3 suppliers suggested (6.4).
+PR-26-00620,1,ITM-1028,REQ-0031,,SOURCING_REQUEST,RFQ,,,448628,S019;S017;S020,5.1,RFQ: value Rs 448628 (clause 5.5); 3 suppliers suggested (6.4).
+PR-26-00621,1,ITM-1017,REQ-0125,,SOURCING_REQUEST,RFP,,,965826,S012;S009;S010,5.1,RFP: value Rs 965826 (clause 5.6); 3 suppliers suggested (6.4).
+PR-26-00622,1,ITM-1018,REQ-0120,,SOURCING_REQUEST,RFP,,,804637,S009;S012;S010,5.1,RFP: value Rs 804637 (clause 5.6); 3 suppliers suggested (6.4).
+PR-26-00623,1,ITM-1008,REQ-0129,,SOURCING_REQUEST,RFP,,,896537,S001;S005;S002;S003,5.1,RFP: value Rs 896537 (clause 5.6); 4 suppliers suggested (6.4).
+PR-26-00624,1,ITM-1026,REQ-0087,,SOURCING_REQUEST,RFP,,,1063800,S014;S015;S013;S016,5.1,RFP: value Rs 1063800 (clause 5.6); 4 suppliers suggested (6.4).
+PR-26-00625,1,ITM-1051,REQ-0133,,SOURCING_REQUEST,RFP,,,819673,S029;S030,5.1,RFP: value Rs 819673 (clause 5.6); 2 suppliers suggested (6.4).
+PR-26-00626,1,ITM-1012,REQ-0111,PO-0061,PO,SPOT_PO,S006,1,133387,,5.1,SPOT_PO to 1st preferred supplier at reference price (clause 5.4); value Rs 133387.
+PR-26-00627,1,ITM-1012,REQ-0111,PO-0061,PO,SPOT_PO,S006,1,133387,,5.1,SPOT_PO to 1st preferred supplier at reference price (clause 5.4); value Rs 133387.
+PR-26-00628,1,ITM-1012,REQ-0111,PO-0061,PO,SPOT_PO,S006,1,133387,,5.1,SPOT_PO to 1st preferred supplier at reference price (clause 5.4); value Rs 133387.
+PR-26-00629,1,ITM-1005,REQ-0107,PO-0059,PO,SPOT_PO,S003,74,150910,,5.1,SPOT_PO to 1st preferred supplier at reference price (clause 5.4); value Rs 150910.
+PR-26-00630,1,ITM-1005,REQ-0107,PO-0059,PO,SPOT_PO,S003,74,150910,,5.1,SPOT_PO to 1st preferred supplier at reference price (clause 5.4); value Rs 150910.
+PR-26-00631,1,ITM-1005,REQ-0107,PO-0059,PO,SPOT_PO,S003,74,150910,,5.1,SPOT_PO to 1st preferred supplier at reference price (clause 5.4); value Rs 150910.
+PR-26-00632,1,ITM-1027,REQ-0026,PO-0017,PO,SPOT_PO,S015,269,145236,,5.1,SPOT_PO to 1st preferred supplier at reference price (clause 5.4); value Rs 145236.
+PR-26-00633,1,ITM-1027,REQ-0026,PO-0017,PO,SPOT_PO,S015,269,145236,,5.1,SPOT_PO to 1st preferred supplier at reference price (clause 5.4); value Rs 145236.
+PR-26-00634,1,ITM-1027,REQ-0026,PO-0017,PO,SPOT_PO,S015,269,145236,,5.1,SPOT_PO to 1st preferred supplier at reference price (clause 5.4); value Rs 145236.
+PR-26-00635,1,ITM-1018,REQ-0081,PO-0047,PO,SPOT_PO,S009,1187,157842,,5.1,SPOT_PO to 1st preferred supplier at reference price (clause 5.4); value Rs 157842.
+PR-26-00636,1,ITM-1018,REQ-0081,PO-0047,PO,SPOT_PO,S009,1187,157842,,5.1,SPOT_PO to 1st preferred supplier at reference price (clause 5.4); value Rs 157842.
+PR-26-00637,1,ITM-1018,REQ-0081,PO-0047,PO,SPOT_PO,S009,1187,157842,,5.1,SPOT_PO to 1st preferred supplier at reference price (clause 5.4); value Rs 157842.
+PR-26-00638,1,ITM-1051,REQ-0035,PO-0022,PO,EMERGENCY_PO,S029,9,279882,,5.1,EMERGENCY_PO to 1st preferred supplier at reference price (clause 5.3); value Rs 279882.
+PR-26-00639,1,ITM-1051,REQ-0035,PO-0022,PO,EMERGENCY_PO,S029,9,279882,,5.1,EMERGENCY_PO to 1st preferred supplier at reference price (clause 5.3); value Rs 279882.
+PR-26-00640,1,ITM-1051,REQ-0035,PO-0022,PO,EMERGENCY_PO,S029,9,279882,,5.1,EMERGENCY_PO to 1st preferred supplier at reference price (clause 5.3); value Rs 279882.
+PR-26-00641,1,ITM-1008,REQ-0093,PO-0055,PO,SPOT_PO,S001,86,171220,,5.1,SPOT_PO to 1st preferred supplier at reference price (clause 5.4); value Rs 171220.
+PR-26-00642,1,ITM-1008,REQ-0093,PO-0055,PO,SPOT_PO,S001,86,171220,,5.1,SPOT_PO to 1st preferred supplier at reference price (clause 5.4); value Rs 171220.
+PR-26-00643,1,ITM-1008,REQ-0093,PO-0055,PO,SPOT_PO,S001,86,171220,,5.1,SPOT_PO to 1st preferred supplier at reference price (clause 5.4); value Rs 171220.
+PR-26-00644,1,ITM-1008,REQ-0093,PO-0055,PO,SPOT_PO,S001,86,171220,,5.1,SPOT_PO to 1st preferred supplier at reference price (clause 5.4); value Rs 171220.
+PR-26-00645,1,ITM-1059,REQ-0070,,SOURCING_REQUEST,RFP,,,2321737,S035;S036;S037,5.1,RFP: value Rs 2321737 (clause 5.6); 3 suppliers suggested (6.4).
+PR-26-00646,1,ITM-1059,REQ-0077,PO-0045,PO,SPOT_PO,S035,3000,11999,,5.1,SPOT_PO to 1st preferred supplier at reference price (clause 5.4); value Rs 11999.
+PR-26-00647,1,ITM-1059,REQ-0085,PO-0051,PO,SPOT_PO,S035,3000,14998,,5.1,SPOT_PO to 1st preferred supplier at reference price (clause 5.4); value Rs 14998.
+PR-26-00648,1,ITM-1050,REQ-0023,PO-0015,PO,SPOT_PO,S029,131,18137,,5.1,SPOT_PO to 1st preferred supplier at reference price (clause 5.4); value Rs 18137.
+PR-26-00649,1,ITM-1050,REQ-0032,PO-0020,PO,SPOT_PO,S029,131,15546,,5.1,SPOT_PO to 1st preferred supplier at reference price (clause 5.4); value Rs 15546.
+PR-26-00650,1,ITM-1050,REQ-0042,PO-0029,PO,SPOT_PO,S029,131,10364,,5.1,SPOT_PO to 1st preferred supplier at reference price (clause 5.4); value Rs 10364.
+PR-26-00651,1,ITM-1004,REQ-0062,PO-0039,PO,SPOT_PO,S003,23774,23774,,5.1,SPOT_PO to 1st preferred supplier at reference price (clause 5.4); value Rs 23774.
+PR-26-00652,1,ITM-1004,REQ-0066,PO-0041,PO,EMERGENCY_PO,S003,23774,380380,,5.1,EMERGENCY_PO to 1st preferred supplier at reference price (clause 5.3); value Rs 380380.
+PR-26-00653,1,ITM-1004,REQ-0075,PO-0044,PO,SPOT_PO,S003,23774,23774,,5.1,SPOT_PO to 1st preferred supplier at reference price (clause 5.4); value Rs 23774.
+PR-26-00654,1,ITM-1046,REQ-0092,PO-0054,PO,CONTRACT_PO,S029,1092,251075,,5.1,"Contract RC-2026-007 (SafeGuard Industrial Supplies) covers the item, valid on 2026-12-03, supplier Active, ceiling left (5.2/4.1-4.3)."
+PR-26-00655,1,ITM-1047,REQ-0099,PO-0054,PO,CONTRACT_PO,S029,26,300035,,5.1,"Contract RC-2026-007 (SafeGuard Industrial Supplies) covers the item, valid on 2026-12-03, supplier Active, ceiling left (5.2/4.1-4.3)."
+PR-26-00656,1,ITM-1048,REQ-0102,PO-0054,PO,CONTRACT_PO,S029,90,14451,,5.1,"Contract RC-2026-007 (SafeGuard Industrial Supplies) covers the item, valid on 2026-12-04, supplier Active, ceiling left (5.2/4.1-4.3)."
+PR-26-00657,1,ITM-1049,REQ-0110,PO-0060,PO,CONTRACT_PO,S029,191,17218,,5.1,"Contract RC-2026-007 (SafeGuard Industrial Supplies) covers the item, valid on 2026-12-04, supplier Active, ceiling left (5.2/4.1-4.3)."
+PR-26-00658,1,ITM-1009,REQ-0003,PO-0001,PO,CONTRACT_PO,S007,7,173958,,5.1,"Contract RC-2026-013 (Precision Fasteners Co) covers the item, valid on 2026-11-23, supplier Active, ceiling left (5.2/4.1-4.3)."
+PR-26-00659,1,ITM-1010,REQ-0004,PO-0001,PO,CONTRACT_PO,S007,2,276912,,5.1,"Contract RC-2026-013 (Precision Fasteners Co) covers the item, valid on 2026-11-23, supplier Active, ceiling left (5.2/4.1-4.3)."
+PR-26-00660,1,ITM-1011,REQ-0008,PO-0001,PO,CONTRACT_PO,S007,6,32832,,5.1,"Contract RC-2026-013 (Precision Fasteners Co) covers the item, valid on 2026-11-24, supplier Active, ceiling left (5.2/4.1-4.3)."
+PR-26-00661,1,ITM-1013,REQ-0011,PO-0006,PO,CONTRACT_PO,S007,36,35818,,5.1,"Contract RC-2026-013 (Precision Fasteners Co) covers the item, valid on 2026-11-24, supplier Active, ceiling left (5.2/4.1-4.3)."
+PR-26-00662,1,ITM-1060,REQ-0143,,SOURCING_REQUEST,RFQ,,,174000,S035;S036;S037,5.1,RFQ: value Rs 174000 (clause 5.5); 3 suppliers suggested (6.4).
+PR-26-00662,2,ITM-1065,REQ-0152,PO-0080,PO,SPOT_PO,S042,10140,91257,,5.1,SPOT_PO to 1st preferred supplier at reference price (clause 5.4); value Rs 91257.
+PR-26-00662,3,ITM-1062,REQ-0153,,SOURCING_REQUEST,RFQ,,,241187,S040;S039;S041,5.1,RFQ: value Rs 241187 (clause 5.5); 3 suppliers suggested (6.4).
+PR-26-00663,1,ITM-1073,REQ-0067,,SOURCING_REQUEST,CAPEX_SOURCING,,,1150000,S045;S047;S020;S048;S046,5.1,CAPEX_SOURCING: value Rs 1150000 (clause 5.1); 5 suppliers suggested (6.4).
+PR-26-00663,2,ITM-1067,REQ-0068,,SOURCING_REQUEST,RFQ,,,203029,S044;S043;S042,5.1,RFQ: value Rs 203029 (clause 5.5); 3 suppliers suggested (6.4).
+PR-26-00663,3,ITM-1063,REQ-0069,PO-0042,PO,SPOT_PO,S039,19523,67152,,5.1,SPOT_PO to 1st preferred supplier at reference price (clause 5.4); value Rs 67152.
+PR-26-00664,1,ITM-1071,REQ-0033,,SOURCING_REQUEST,CAPEX_SOURCING,,,4527528,S045;S047;S020;S048;S046,5.1,CAPEX_SOURCING: value Rs 4527528 (clause 5.1); 5 suppliers suggested (6.4).
+PR-26-00664,2,ITM-1070,REQ-0078,,SOURCING_REQUEST,CAPEX_SOURCING,,,744138,S020;S047;S048;S046;S045,5.1,CAPEX_SOURCING: value Rs 744138 (clause 5.1); 5 suppliers suggested (6.4).
+PR-26-00665,1,ITM-1064,REQ-0148,,SOURCING_REQUEST,RFQ,,,342679,S039;S038;S040,5.1,RFQ: value Rs 342679 (clause 5.5); 3 suppliers suggested (6.4).
+PR-26-00665,2,ITM-1055,REQ-0149,,SOURCING_REQUEST,RFQ,,,218500,S033;S032,5.1,RFQ: value Rs 218500 (clause 5.5); 2 suppliers suggested (6.4).
+PR-26-00665,3,ITM-1069,REQ-0150,,SOURCING_REQUEST,CAPEX_SOURCING,,,4561601,S045;S047;S020;S048;S046,5.1,CAPEX_SOURCING: value Rs 4561601 (clause 5.1); 5 suppliers suggested (6.4).
+PR-26-00666,1,ITM-1032,REQ-0115,,SOURCING_REQUEST,RFQ,,,258500,S017;S020;S019,5.1,RFQ: value Rs 258500 (clause 5.5); 3 suppliers suggested (6.4).
+PR-26-00666,2,ITM-1025,REQ-0116,,SOURCING_REQUEST,RFQ,,,171600,S014;S015;S013,5.1,RFQ: value Rs 171600 (clause 5.5); 3 suppliers suggested (6.4).
+PR-26-00666,3,ITM-1072,REQ-0117,,SOURCING_REQUEST,CAPEX_SOURCING,,,2738201,S045;S047;S020;S048;S046,5.1,CAPEX_SOURCING: value Rs 2738201 (clause 5.1); 5 suppliers suggested (6.4).
+PR-26-00666,4,ITM-1011,REQ-0118,PO-0061,PO,SPOT_PO,S006,7,189060,,5.1,SPOT_PO to 1st preferred supplier at reference price (clause 5.4); value Rs 189060.
+PR-26-00667,1,ITM-1066,REQ-0005,,SOURCING_REQUEST,RFP,,,807749,S043;S044;S042,5.1,RFP: value Rs 807749 (clause 5.6); 3 suppliers suggested (6.4).
+PR-26-00667,2,ITM-1001,REQ-0018,PO-0009,PO,CONTRACT_PO,S001,6340,253616,,5.1,"Contract RC-2025-011 (Bhosari Steel Traders) covers the item, valid on 2026-11-24, supplier Active, ceiling left (5.2/4.1-4.3)."
+PR-26-00667,3,ITM-1002,REQ-0019,PO-0009,PO,CONTRACT_PO,S001,9169,174205,,5.1,"Contract RC-2025-011 (Bhosari Steel Traders) covers the item, valid on 2026-11-24, supplier Active, ceiling left (5.2/4.1-4.3)."
+PR-26-00667,4,ITM-1065,REQ-0020,PO-0012,PO,SPOT_PO,S042,10140,182514,,5.1,SPOT_PO to 1st preferred supplier at reference price (clause 5.4); value Rs 182514.
+PR-26-00668,1,NEW,REQ-0052,,SOURCING_REQUEST,NEW_ITEM_SOURCING,,,149600,,5.1,No item master match (no confident match (best ITM-1065 0.36) -> new item); new item to sourcing (1.2).
+PR-26-00669,1,NEW,REQ-0071,,SOURCING_REQUEST,NEW_ITEM_SOURCING,,,145400,,5.1,No item master match (no confident match (best ITM-1019 0.20) -> new item); new item to sourcing (1.2).
+PR-26-00670,1,NEW,REQ-0060,,SOURCING_REQUEST,NEW_ITEM_SOURCING,,,37000,,5.1,No item master match (no confident match (best ITM-1066 0.40) -> new item); new item to sourcing (1.2).
+PR-26-00671,1,ITM-1042,REQ-0057,,SOURCING_REQUEST,RFQ,,,143962,S026;S028;S025,5.1,RFQ: value Rs 143962 (clause 5.5); 3 suppliers suggested (6.4).
+PR-26-00672,1,ITM-1042,REQ-0057,,SOURCING_REQUEST,RFQ,,,143962,S026;S028;S025,5.1,RFQ: value Rs 143962 (clause 5.5); 3 suppliers suggested (6.4).
+PR-26-00673,1,ITM-1042,REQ-0057,,SOURCING_REQUEST,RFQ,,,143962,S026;S028;S025,5.1,RFQ: value Rs 143962 (clause 5.5); 3 suppliers suggested (6.4).
+PR-26-00674,1,ITM-1034,REQ-0038,PO-0025,PO,SPOT_PO,S020,41416,0,,5.1,SPOT_PO to 1st preferred supplier at reference price (clause 5.4); value Rs 0.
+PR-26-00675,1,ITM-1034,REQ-0022,PO-0014,PO,SPOT_PO,S020,41416,41416,,5.1,SPOT_PO to 1st preferred supplier at reference price (clause 5.4); value Rs 41416.
+PR-26-00676,1,ITM-1029,REQ-0054,,SOURCING_REQUEST,RFQ,,,222592,S020;S017;S019,5.1,RFQ: value Rs 222592 (clause 5.2A); 3 suppliers suggested (6.4).
+PR-26-00677,1,ITM-1029,REQ-0054,,SOURCING_REQUEST,RFQ,,,222592,S020;S017;S019,5.1,RFQ: value Rs 222592 (clause 5.2A); 3 suppliers suggested (6.4).

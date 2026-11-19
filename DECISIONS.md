@@ -120,4 +120,15 @@ business decision, implemented it, and recorded it here. Format: **what I notice
 - **Why:** the ranking must be defensible to a buyer without opening the PDF, and Run 2 must be applied *through the app* even if the amendment is worded in a way the heuristic parser doesn't recognise or the machine has no API key. Both paths are still data-only: no code change, and the ops are validated and previewed before anything activates.
 
 ---
+
+### D-22 · Blind test — how Amendment No. 1 (v5.1) was applied (post-freeze note, no code change)
+- **Noticed:** Amendment No. 1 (effective 2026-12-01) has three changes, two of them category/plant-conditional, which the heuristic NL parser cannot infer and the hosted app has no LLM key. The brief allows applying it "through your app's own policy-update feature (upload or chat)".
+- **Decided:** applied it as **structured policy ops** through the app's amendment endpoint (the Policy tab's structured-ops panel, pre-built before the freeze — see D-21), previewed, approved into version **5.1 / effective 2026-12-01**. No code was changed; only policy data. The exact ops (reproducible on the hosted app):
+  - **A1 (Packaging spot limit 2L→1L):** rule 5.4 made category-aware — spot now needs `value < 100000` for `item.category == "Packaging"` and keeps `value < 200000` for every other category (verified: non-packaging items in ₹1–2L stay SPOT_PO).
+  - **A2 (RFP threshold 10L→8L):** rule 5.5 (RFQ) threshold `< 800000`; rule 5.6 (RFP) threshold `>= 800000`.
+  - **A3 (new rule 5.2A, Chakan electrical safety):** inserted immediately after rule 5.2 (so a contract PO still wins) and before 5.3/5.4 (so it overrides emergency/spot): for `requirement.plant == "CHK1"` and `item.category == "Electrical Spares"` and `value >= 50000` → sourcing — RFP when `value >= 800000`, else RFQ.
+- **Effect:** 25 of 190 decisions changed between Run 1 (v5.0) and Run 2 (v5.1), all attributable to A1/A2/A3; no Blocked/Inactive supplier appears in either run. Outputs: `submission/saurabhyadav__run1.csv`, `__run2.csv`, `__preferred.csv` (preferred as of 2026-12-01, top 3).
+- **Why:** faithful to the amendment's exact wording and category/plant scope, fully as policy data, and reproducible by pasting the same ops into the hosted app's structured-ops panel.
+
+---
 *Append new decisions as they arise during the build and before the freeze.*

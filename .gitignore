@@ -42,3 +42,6 @@ api/app.db
 # blind-test deliverables: the kit's CSVs stay ignored, but the three submission
 # outputs must be committed (see SUBMISSION.md §4). Last matching rule wins.
 !submission/*.csv
+
+# Blind-test kit (task data — never commit)
+FullStack_Blind_Test/
